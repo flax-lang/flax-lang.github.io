@@ -157,11 +157,11 @@
 				background: #f4f4f4;
 				padding: 0.75em;
 				width: 100%;
-				-moz-transition: background-color .25s ease-in-out;
-				-webkit-transition: background-color .25s ease-in-out;
-				-o-transition: background-color .25s ease-in-out;
-				-ms-transition: background-color .25s ease-in-out;
-				transition: background-color .25s ease-in-out;
+				-moz-transition: background-color .1s ease-in-out;
+				-webkit-transition: background-color .1s ease-in-out;
+				-o-transition: background-color .1s ease-in-out;
+				-ms-transition: background-color .1s ease-in-out;
+				transition: background-color .1s ease-in-out;
 			}
 
 			form input[type="text"],
@@ -522,11 +522,11 @@
 		{
 			color: #ddd;
 			color: rgba(255,255,255,0.65);
-			-moz-transition: color .25s ease-in-out;
-			-webkit-transition: color .25s ease-in-out;
-			-o-transition: color .25s ease-in-out;
-			-ms-transition: color .25s ease-in-out;
-			transition: color .25s ease-in-out;
+			-moz-transition: color .1s ease-in-out;
+			-webkit-transition: color .1s ease-in-out;
+			-o-transition: color .1s ease-in-out;
+			-ms-transition: color .1s ease-in-out;
+			transition: color .1s ease-in-out;
 		}
 
 		#footer a:hover

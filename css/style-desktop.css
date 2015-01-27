@@ -128,11 +128,11 @@
 			margin: 0 0.25em 0 0.25em;
 			opacity: 0.35;
 			outline: 0;
-			-moz-transition: opacity .25s ease-in-out;
-			-webkit-transition: opacity .25s ease-in-out;
-			-o-transition: opacity .25s ease-in-out;
-			-ms-transition: opacity .25s ease-in-out;
-			transition: opacity .25s ease-in-out;
+			-moz-transition: opacity .1s ease-in-out;
+			-webkit-transition: opacity .1s ease-in-out;
+			-o-transition: opacity .1s ease-in-out;
+			-ms-transition: opacity .1s ease-in-out;
+			transition: opacity .1s ease-in-out;
 		}
 
 			#nav a:before
@@ -151,11 +151,11 @@
 				border-bottom: solid 0em #ffffff;
 				border-left: solid 0.5em transparent;
 				border-right: solid 0.5em transparent;
-				-moz-transition: border-bottom-width .25s ease-in-out;
-				-webkit-transition: border-bottom-width .25s ease-in-out;
-				-o-transition: border-bottom-width .25s ease-in-out;
-				-ms-transition: border-bottom-width .25s ease-in-out;
-				transition: border-bottom-width .25s ease-in-out;
+				-moz-transition: border-bottom-width .1s ease-in-out;
+				-webkit-transition: border-bottom-width .1s ease-in-out;
+				-o-transition: border-bottom-width .1s ease-in-out;
+				-ms-transition: border-bottom-width .1s ease-in-out;
+				transition: border-bottom-width .1s ease-in-out;
 			}
 
 			#nav a span
@@ -170,11 +170,11 @@
 				line-height: 2.25em;
 				left: 50%;
 				opacity: 0;
-				-moz-transition: opacity .25s ease-in-out;
-				-webkit-transition: opacity .25s ease-in-out;
-				-o-transition: opacity .25s ease-in-out;
-				-ms-transition: opacity .25s ease-in-out;
-				transition: opacity .25s ease-in-out;
+				-moz-transition: opacity .1s ease-in-out;
+				-webkit-transition: opacity .1s ease-in-out;
+				-o-transition: opacity .1s ease-in-out;
+				-ms-transition: opacity .1s ease-in-out;
+				transition: opacity .1s ease-in-out;
 
 				/* Labels not wide enough? Increase its width below and set margin-left to ((width / 2) * -1) */
 				width: 5.5em;

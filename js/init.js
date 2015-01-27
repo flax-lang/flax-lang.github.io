@@ -13,10 +13,10 @@
 		var settings = {
 
 			// Speed to resize panel.
-				resizeSpeed: 600,
+				resizeSpeed: 250,
 
 			// Speed to fade in/out.
-				fadeSpeed: 300,
+				fadeSpeed: 100,
 
 			// Size factor.
 				sizeFactor: 11.5,
@@ -228,7 +228,7 @@
 					if (hash && hash in panels)
 						panels[hash]._activate(true);
 
-					$wrapper.fadeTo(400, 1.0);
+					$wrapper.fadeTo(200, 1.0);
 
 			}
 		});
