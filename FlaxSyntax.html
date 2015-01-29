@@ -36,10 +36,9 @@ When no explicit initialiser is given, variables are initialised to a zero value
 <hr />
 <header><h3>Pointer Syntax</h3></header>
 <p>
-Flax fully supports pointers, and they have an intuitive syntax:
+Flax fully supports pointers, and they have an intuitive syntax. Note that unlike in C/C++, the "pointerness" of a type is bound to the type itself, not the name. It would be pretty stupid to have <span class="inline-code">var foo*:Int32</span> for an Int32*, would it not?
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 var vga: Int16* = 0xB8000 as Int16*
-var framebuffer: Int8 ptr = 0xFD000000 as Int8 ptr		// alternative syntax
 </code></pre></p>
 
 
@@ -52,7 +51,9 @@ var vgaPtrAgain: Int16* = &amp;firstByte	// take the address with '&amp;'
 </p>
 
 
-
+<p>
+Naturally, pointers can be indexed into
+</p>
 
 
 
@@ -62,30 +63,6 @@ var vgaPtrAgain: Int16* = &amp;firstByte	// take the address with '&amp;'
 
 </div>
 
-
-<!--
-```swift
-var x: Int8 ptr = 0
-var y: Int8* = 0
-
-// Pointers to pointers:
-var y: Int8 ptr ptr = 0
-var z: Int8** = 0
-```
-
-Use 'deref' and 'addrof' to dereference a pointer and take the address of a variable, respectively.
-C-style syntax is supported for these, except dereferencing uses the pound '#' operator
-
-```swift
-var a: Int8 = 100
-var b: Int8 ptr = addrof a
-var c: Int8 = deref b
-
-var a2: Int8 = 100
-var b2: Int8* = &a
-var c2: Int8 = #b
-
-```
 
 Pointers can also be indexed into. No bounds-checking will be done, however. (Planned)
 
