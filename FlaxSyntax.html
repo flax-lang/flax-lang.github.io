@@ -46,8 +46,8 @@ var framebuffer: Int8 ptr = 0xFD000000 as Int8 ptr		// alternative syntax
 <p>
 Taking the address of a variable, as well as dereferencing a pointer, have equally familiar syntax:
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
-var firstByte: Int8 = #vga				// dereference with '#'
-var vgaPtrAgain: Int8* = &amp;firstByte		// take the address with '&amp;'
+var firstByte: Int16 = #vga				// dereference with '#'
+var vgaPtrAgain: Int16* = &amp;firstByte	// take the address with '&amp;'
 </code></pre>
 </p>
 
