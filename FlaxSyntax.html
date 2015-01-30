@@ -1,5 +1,5 @@
 <div class="docs">
-<header><h2>Flax Language Syntax</h2></header>
+<header><h1>Flax Language Syntax</h1></header>
 <p>Note that the language is still in flux, and syntax elements are subject to change</p>
 
 <hr />
@@ -7,7 +7,7 @@
 <section>
 
 
-<header><h3>General Syntax and Variables</h3></header>
+<header id="doc-general"><h2>General Syntax and Variables</h2></header>
 <p>
 Flax currently adopts a Swift-inspired syntax, which in turn is very much C-like. It also ignores semicolons. It's not entirely true to say that they're optional, rather they're just ignored as a syntactic token.
 <br />
@@ -33,7 +33,7 @@ When no explicit initialiser is given, variables are initialised to a zero value
 </p>
 
 <hr />
-<header><h3>Pointer Syntax</h3></header>
+<header id="doc-pointers"><h2>Pointers</h2></header>
 <p>
 Flax fully supports pointers, and they have an intuitive syntax. Note that unlike in C/C++, the "pointerness" of a type is bound to the type itself, not the name. It would be pretty stupid to have <span class="inline-code">var foo*: Int32</span> for an <span class="inline-code">Int32*</span>, would it not?
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
@@ -70,7 +70,102 @@ printf("%p", qux)		// prints 0xFF20
 
 
 
+<hr />
+<header id="doc-functions"><h2>Functions</h2></header>
+<p>
+Functions are declared with the <span class="inline-code">func</span> keyword, proceeded by the function name, a list of arguments in parenteses, and finally the return type after a <span class="inline-code">-&gt;</span>. The return type can be omitted if the function returns Void (aka nothing).
 
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+func Foo(bar: Int64, qux: Int8*) -> Float64
+{
+	// ...
+}
+</code></pre>
+</p>
+
+<p>
+Naturally, the <span class="inline-code">return</span> keyword can be used to return a value from a function. Note that it is an error not to return a value in a function with a non-Void return value.
+<br />
+Implicit returns are planned, but are currently not implemented yet:
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+func mult(a: Float32, b: Float32) -> Float32 { a * b }
+</code></pre>
+</p>
+
+<p>
+Flax supports calling C calling conventions (due to using LLVM), and as such two-way interaction is possible. To declare an externally-defined C function, use the <span class="inline-code">ffi</span> keyword preceeding <span class="inline-code">func</span>.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+ffi func printf(x: Int8*, ...)
+</code></pre>
+
+<br />
+As you can see, declaring C functions that take a variable number of arguments is supported using <span class="inline-code">...</span>, however it is currently not possible to write Flax functions with a variable number of parameters. Additionally, <span class="inline-code">ffi</span> functions are the only time where Flax functions can have no body. Finally, names still need to be given to all the parameters in the declaration -- this will be addressed eventually.
+</p>
+
+<p>
+Functions can be overloaded if they take a different number of arguments, or arguments of different types between their incarnations. The Flax compiler will determine at compile time which function to call. Note that if two functions differ only in their return type, they cannot be overloaded, as the compiler usually does not have enough information to determine which function to call in most cases.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+func printInt(x: Int8)    { printf("%hhd is an Int8!\n", x) }
+func printInt(x: Int32)   { printf("%d is an Int32!\n", x)  }
+func printInt(x: Float32) { printf("%f is a Float32!\n", x) }
+
+printf(42 as Int8)		// 42 is an Int8
+printf(581 as Int32)	// 581 is an Int32
+printf(45.5 as Float32)	// 45.5 is a Float32
+</code></pre>
+<br />
+To handle outputting LLVM bitcode (which does not support overloading), Flax function names are mangled, unless specified otherwise. It uses its own cranky mangling system, observe: <span class="inline-code">[basename]#_[param1Type]_[paramNType]</span>
+<br />
+If a function takes no parameters, it is mangled as if it has a single parameter of type <span class="inline-code">Void</span>. To specify that a function should not be mangled, use the <span class="inline-code">@nomangle</span> attribute. Attributes will be discussed in detail below.
+
+</p>
+
+
+
+
+
+
+<hr />
+<header id="doc-structs"><h2>Structs</h2></header>
+<p>
+Structs are declared with the <span class="inline-code">struct</span> keyword.
+All functions in a struct have an implicit first parameter called 'self', which is a pointer type.
+Flax does not distinguish between pointer access and non-pointer access, both use the '.' operator. Yes, this means that accessing struct members through a pointer is allowed (in C/C++, this is done using <span class="inline-code">-&gt;</span>)
+
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+struct FooBar
+{
+	// ... members ...
+}
+</code></pre>
+</p>
+
+
+<p>
+Structs can have 3 kinds of members: constructors and destructors, member variables, and functions (although theoretially init functions are still functions). Currently, the implementation of Flax limits member types to only variables and functions. Custom constructors can be specified, but currently cannot be overloaded and must take zero parameters. Destructors are not yet supported.
+<br />
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+struct GuideToGalaxy
+{
+	var theAnswer: Int64
+	var billionsOfPeopleOnEarth: Int64 = 7	// inline initialisers are allowed.
+
+	// You can declare an init() function yourself
+	init()
+	{
+		self.theAnswer = (6 * 7) * self.billionsOfPeopleOnEarth
+	}
+
+	func calculateAnswerToLifeTheUniverseAndEverything() -> Int64
+	{
+		return self.theAnswer
+	}
+}
+</code></pre>
+<br />
+<p>
+If you remember the <span class="inline-code">__automatic_init()</span> previously mentioned, here is where it comes into play: it is called to ensure a zero-value on all member variables in a struct instance, as well as to actually assign the inline initialiser values. To disable this for whatever reason (and to leave it uninitialised), use the <span class="inline-code">@noautoinit</span> attribute.
+</p>
 
 </section>
 
@@ -79,53 +174,7 @@ printf("%p", qux)		// prints 0xFF20
 <!--
 
 <br/>
-#### Functions ####
-Functions are declared like so:
-
-```swift
-func Foo(bar: Int64, qux: Int8 ptr) -> Int32
-{
-	...
-}
-```
-
-The return type can be omitted if the function returns Void.
-Implicit returns are planned, but support is currently iffy and has been disabled.
-
-Functions can prefixed with the 'public' keyword (before 'func) to make them exposed and linker-visible. They are 'private' and module-local by default.
-
-
-The keyword 'ffi' can be used to declare an external C function.
-note that this is the only kind of declaration-without-body supported in Flax.
-Unfortunately, you still need to provide an identifier for the parameter. A fix is coming soon.
-Varargs are only supported for external functions, you cannot currently write Flax functions taking a varialbe
-number of parameters.
-
-```swift
-ffi func printf(x: Int8 ptr, ...)
-```
-
-Furthermore, functions can be overloaded if they take different parameter types.
-The functions' names are mangled like so:
-`[basename]#_[param1Type]_[param2Type]_[paramNType]`
-Functions marked with 'ffi' or the '@nomangle' attribute (see below) will not be mangled.
-As a result, they cannot be overloaded.
-Functions taking no arguments will be mangled, taking a single parameter of type 'void'. (aka nothing)
-
-```swift
-func printInt(x: Int8) { ... }
-func printInt(x: Int16) { ... }
-func printInt(x: Int32) { ... }
-```
-
-
-<br/>
 #### Structs ####
-
-Structs are declared with the 'struct' keyword.
-All functions in a struct have an implicit first parameter called 'self', which is a pointer type.
-Flax does not distinguish between pointer access and non-pointer access, both use the '.' operator.
-However, pointers-to-pointers-to-structs cannot be accessed this way. Only a single-level of indirection is supported.
 
 ```swift
 struct GuideToGalaxy
