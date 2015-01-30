@@ -11,8 +11,7 @@
 <p>
 Flax currently adopts a Swift-inspired syntax, which in turn is very much C-like. It also ignores semicolons. It's not entirely true to say that they're optional, rather they're just ignored as a syntactic token.
 <br />
-Of course, you still can't place it in the middle of expressions.
-Expressions and statements are the same thing, and are not distinguished in this language.
+Of course, you still can't place it in the middle of expressions. Speaking of which, expressions and statements are the same thing, and are not distinguished in this language.
 
 <br />
 There are 11 builtin types available for variables:
@@ -30,13 +29,13 @@ However, the compiler will automatically cast them into an appropriate type for 
 </p>
 
 <p>
-When no explicit initialiser is given, variables are initialised to a zero value that is appropriate. Pointers and integers get 0, while aggregated types (structs, classes) will have their <span class="inline-code">__automatic_init()</span> function called (explained below, it's not a constructor), which will in turn initialise all its members to their zero values.
+When no explicit initialiser is given, variables are initialised to a zero value that is appropriate. Pointers and integers get 0, while aggregated types (structs, classes) will have their <span class="inline-code">__automatic_init()</span> function called (explained below), unless explicitly specified with an attribute.
 </p>
 
 <hr />
 <header><h3>Pointer Syntax</h3></header>
 <p>
-Flax fully supports pointers, and they have an intuitive syntax. Note that unlike in C/C++, the "pointerness" of a type is bound to the type itself, not the name. It would be pretty stupid to have <span class="inline-code">var foo*:Int32</span> for an Int32*, would it not?
+Flax fully supports pointers, and they have an intuitive syntax. Note that unlike in C/C++, the "pointerness" of a type is bound to the type itself, not the name. It would be pretty stupid to have <span class="inline-code">var foo*: Int32</span> for an <span class="inline-code">Int32*</span>, would it not?
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 var vga: Int16* = 0xB8000 as Int16*
 </code></pre></p>
@@ -52,7 +51,21 @@ var vgaPtrAgain: Int16* = &amp;firstByte	// take the address with '&amp;'
 
 
 <p>
-Naturally, pointers can be indexed into
+Naturally, pointers can be indexed into. No bounds-checking will be done, however -- it is planned.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var foos: Int64* = calloc(8, 4) as Int64*	// will be replaced with keyword
+var foo: Int64 = foos[1]
+</code></pre>
+</p>
+
+<p>
+Additionally, pointer arithmetic is also supported. That is to say, adding or subtracting an integer from a pointer type will in fact add or subtract from the address (stored in the pointer var) by that number multiplied by the size in bytes of the type pointed to. If that sounds confusing, the example below will help:
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var qux: Int64* = 0xFF00 as Int64*
+qux += 4				// actually (qux as UintPtr) += (4 * sizeof(Int64))
+
+printf("%p", qux)		// prints 0xFF20
+</code></pre>
 </p>
 
 
@@ -64,12 +77,6 @@ Naturally, pointers can be indexed into
 </div>
 
 <!--
-Pointers can also be indexed into. No bounds-checking will be done, however. (Planned)
-
-```swift
-var f: Int8* = malloc(100)
-f[2] = 42
-```
 
 <br/>
 #### Functions ####
