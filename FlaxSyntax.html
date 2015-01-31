@@ -7,7 +7,7 @@
 <section>
 
 
-<header id="doc-general"><h2>General Syntax and Variables</h2></header>
+<header id="doc-general"><h2>General Syntax and Types</h2></header>
 <p>
 Flax currently adopts a Swift-inspired syntax, which in turn is very much C-like. It also ignores semicolons. It's not entirely true to say that they're optional, rather they're just ignored as a syntactic token.
 <br />
@@ -28,9 +28,31 @@ Note that integer literals have a type of <span class="inline-code">Int64</span>
 However, the compiler will automatically cast them into an appropriate type for the expression, if the destination type is big enough. An error will be thrown if, for instance, you are trying to do this: <span class="inline-code">var x: Int8 = 400</span>
 </p>
 
+
+<hr />
+<header id="doc-vars"><h2>Variables</h2></header>
+<p>
+Variables are declared using a Pascal-like syntax, where the type comes after the variable identifier. Type inference is also supported -- this however requires that the variable be given an initial value at its declaration site.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var foo: Int64 = 91		// explicit type
+var bar = 591			// implicit type (Int64)
+var qux					// illegal, cannot infer type
+</code></pre>
+</p>
+
 <p>
 When no explicit initialiser is given, variables are initialised to a zero value that is appropriate. Pointers and integers get 0, while aggregated types (structs, classes) will have their <span class="inline-code">__automatic_init()</span> function called (explained below), unless explicitly specified with an attribute.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var qux: Int64			// implicit 'qux = 0'
+</code></pre>
 </p>
+
+
+
+
+
+
+
 
 <hr />
 <header id="doc-pointers"><h2>Pointers</h2></header>
