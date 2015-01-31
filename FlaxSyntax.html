@@ -113,11 +113,6 @@ printf(42 as Int8)		// 42 is an Int8
 printf(581 as Int32)	// 581 is an Int32
 printf(45.5 as Float32)	// 45.5 is a Float32
 </code></pre>
-<br />
-To handle outputting LLVM bitcode (which does not support overloading), Flax function names are mangled, unless specified otherwise. It uses its own cranky mangling system, observe: <span class="inline-code">[basename]#_[param1Type]_[paramNType]</span>
-<br />
-If a function takes no parameters, it is mangled as if it has a single parameter of type <span class="inline-code">Void</span>. To specify that a function should not be mangled, use the <span class="inline-code">@nomangle</span> attribute. Attributes will be discussed in detail below.
-
 </p>
 
 
@@ -156,7 +151,7 @@ struct GuideToGalaxy
 		self.theAnswer = (6 * 7) * self.billionsOfPeopleOnEarth
 	}
 
-	func calculateAnswerToLifeTheUniverseAndEverything() -> Int64
+	func calculateAnswer() -> Int64
 	{
 		return self.theAnswer
 	}
@@ -167,89 +162,145 @@ struct GuideToGalaxy
 If you remember the <span class="inline-code">__automatic_init()</span> previously mentioned, here is where it comes into play: it is called to ensure a zero-value on all member variables in a struct instance, as well as to actually assign the inline initialiser values. To disable this for whatever reason (and to leave it uninitialised), use the <span class="inline-code">@noautoinit</span> attribute.
 </p>
 
+<p>
+Of course, structs are valid types everywhere, and can be used to define variables. Note that the struct definition does not need to preceed any usage of it, because the compiler takes multiple passes.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var guide1: GuideToGalaxy
+var guide2: GuideToGalaxy* = &amp;guide1
+</code></pre>
+</p>
+
+<p>
+To access members of structs, be it variables or functions, use the <span class="inline-code">.</span> operator. For convenience when working with structs in memory (at a low level), struct-pointers can also be accessed with the dot syntax, as mentioned above, without explicitly dereferencing the variable.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var answer: Int64 = guide2.calculateAnswer()	// call directly on pointer
+guide1.billionsOfPeopleOnEarth -= 4				// asteroid?
+</code></pre>
+</p>
+
+<hr />
+<header id="doc-arrays"><h2>Arrays</h2></header>
+<p>
+Currently, only fixed-length arrays are supported in Flax. These arrays have compile-time bounds checking, and will generate an error if an attempt is made to access memory outside its allocated length. When creating an array in Flax, all elements will get their default value, usually zero -- unless the <span class="inline-code">@noautoinit</span> attribute is specified.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var i64Arr: Int64[100]
+var something = i64Arr[40]	// okay
+i64Arr[591] = 58774			// error
+</code></pre>
+</p>
+
+
+
+<hr />
+<header id="doc-ifelse"><h2>If/Else</h2></header>
+<p>
+Flax supports the ubiquitous if/elseif/else construct, and its syntax is quite unimaginative, especially to users of other programming languages. A few special points to note -- firstly, the condition to evalulate can be a non-boolean type, in which case a comparison is made in the form of <span class="inline-code">!= 0</span>, meaning all other values evaluate as <span class="inline-code">true</span>. Secondly, the parentheses after the if statement are optional. Finally, the implicit braces rule of C/C++ is not supported -- all if/else statements must be surrounded in braces.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+if someCondition
+{
+	// ...
+}
+else if someOtherCondition &amp;&amp; today != "tuesday"
+{
+	// ...
+}
+else
+{
+	// ...
+}
+</code></pre>
+</p>
+
+<p>
+Both the <span class="inline-code">&amp;&amp;</span> and the <span class="inline-code">||</span> boolean operators are short-circuiting. To those unfamiliar, this means that for an expression <span class="inline-code">a &amp;&amp; b</span>, <span class="inline-code">b</span> will never be evaluated (or if it is a function that returns a boolean, it will never be called) if <span class="inline-code">a</span> is false.
+<br />
+Conversely, for <span class="inline-code">a || b</span>, if <span class="inline-code">a</span> is true, <span class="inline-code">b</span> will never be evaluated.
+</p>
+
+
+
+<hr />
+<header id="doc-loops"><h2>Loops</h2></header>
+
+<p>
+Flax currently supports 3 main kinds of loops; the <span class="inline-code">while</span> loop, the <span class="inline-code">do-while</span> loop and the infinite loop. Note that implicit braces are not permitted as well for these. They have the following syntax:
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+while someCondition
+{
+	// do stuff while someCondition is true
+}
+
+do {
+
+	// do stuff at least once, then only while someCondition is true
+
+} while(someCondition)
+
+loop {
+	// keep doing stuff
+}
+</code></pre>
+</p>
+
+<p>
+As an aside, blocks without any keyword (eg. <span class="inline-code">{ printf("Hi") }</span>) will not be executed. To ensure that such a block is evaluated, preceed the block with either <span class="inline-code">do</span> or <span class="inline-code">loop</span>, depending on the effect you wish to achieve. An interesting tidbit is that all 3 of the above loops share the same AST node, and as such, you can do interesting things with them:
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+do {
+	// executed once
+}
+
+loop {
+	// infinite loop
+}
+
+do {
+	// execute while foo != 0
+} while(foo)
+
+loop {
+	// same as do ... while(foo)
+} while(foo)
+</code></pre>
+</p>
+
+
+
+
+
+
+
+
+
+<hr />
+<header id="doc-mangling"><h2>Name Mangling</h2></header>
+<p>
+There are two main types of name mangling in Flax, mangling of function names and the mangling of function names as members of structs. In both cases, mangling results in a rather long final name, but the benefit of this is that it maintains some sense of readability as to the signature of the function.
+<br />
+<br />
+<br />
+
+
+<header><h3>Functions</h3></header>
+To handle outputting LLVM bitcode (which does not support overloading), Flax function names are mangled, unless specified otherwise. It uses its own cranky mangling system, observe: <span class="inline-code">[basename]#_[param1Type]_[paramNType]</span>
+<br />
+If a function takes no parameters, it is mangled as if it has a single parameter of type <span class="inline-code">Void</span>. To specify that a function should not be mangled, use the <span class="inline-code">@nomangle</span> attribute. Attributes will be discussed in detail below.
+<br />
+<br />
+<br />
+<br />
+
+
+
+<header><h3>Functions in Structs</h3></header>
+The mangling of functions in struct types is very simple compared to the actual mangling of function names; the name of the struct is essentially just prepended to the mangled name of the function: <span class="inline-code">__struct#[structName]_[mangledFuncName]</span>
+</p>
+
+
 </section>
 
 </div>
 
 <!--
-
-<br/>
-#### Structs ####
-
-```swift
-struct GuideToGalaxy
-{
-	// structs can obviously contain members
-	var theAnswer: Int64
-	var billionsOfPeopleOnEarth: Int64 = 7			// inline initialisers are allowed.
-
-	// You can declare an init() function yourself
-	init()
-	{
-		// unfortunately, init functions taking parameters are not yet supported.
-		self.theAnswer = (100 - 94) * self.billionsOfPeopleOnEarth
-
-		// all variables are always initialised with an appropriate zero-value, regardless of the presence of a user-defined
-		// initialiser.
-	}
-
-	func calculateAnswerToLifeTheUniverseAndEverything() -> Int64
-	{
-		// implicit return (TODO: not supported currently)
-		self.theAnswer
-	}
-}
-```
-
-Structs can be used just like any other type:
-
-```swift
-struct Hitchhiker
-{
-	var guide: GuideToGalaxy
-}
-
-var aHitchhiker: Hitchhiker								// this is initialised with a default initialiser.
-var bHitchhiker: Hitchhiker* = &aHitchhiker
-
-// this should theoretically work, but has not been tested extensively. (struct members in structs)
-var answer: Int64 = bHitchhiker.guide.calculateAnswerToLifeTheUniverseAndEverything()
-
-```
-functions in structs are mangled as well, since LLVM does not support namespaced functions.
-They follow this pattern:
-`__struct#[structName]_[mangledFuncName]`
-
-
-
-<br/>
-#### Arrays ####
-Arrays are declared as such:
-
-```swift
-var intArr: Int64[100]
-```
-
-Neither dynamic arrays nor initialiser lists are supported yet.
-You can however always use a pointer. Those subscript as well.
-speaking of subscripting:
-
-```swift
-var someInt: Int64 = intArr[50]
-```
-
-Fortunately, since the length of the array is known at compile time, this will fail
-
-```swift
-var someOtherInt: Int64 = intArr[1585]
-```
-
-Of course, array elements can be assigned to.
-
-```swift
-intArr[40] = 42
-```
-
 
 
 <br/>
