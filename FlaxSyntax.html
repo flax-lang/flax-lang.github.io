@@ -48,6 +48,13 @@ var qux: Int64			// implicit 'qux = 0'
 </p>
 
 
+<p>
+Constants can be declared using the <span class="inline-code">val</span> keyword in place of <span class="inline-code">var</span>. As the name suggests, they cannot be changed once set, and must have a value at initialisation.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+val qux = 501
+qux = 49134		// illegal
+</code></pre>
+</p>
 
 
 
@@ -181,7 +188,7 @@ struct GuideToGalaxy
 </code></pre>
 <br />
 <p>
-If you remember the <span class="inline-code">__automatic_init()</span> previously mentioned, here is where it comes into play: it is called to ensure a zero-value on all member variables in a struct instance, as well as to actually assign the inline initialiser values. To disable this for whatever reason (and to leave it uninitialised), use the <span class="inline-code">@noautoinit</span> attribute.
+If you remember the <span class="inline-code">__automatic_init()</span> previously mentioned, here is where it comes into play: it is called to ensure a zero-value on all member variables in a struct instance, as well as to actually assign the inline initialiser values. To disable this for whatever reason (and to leave it uninitialised), use the <span class="inline-code">@noautoinit</span> attribute. Note that this only applies to struct types, and has no effect on variables with a primitive type.
 </p>
 
 <p>
