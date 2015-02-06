@@ -200,6 +200,14 @@ var guide2: GuideToGalaxy* = &amp;guide1
 </p>
 
 <p>
+In order to initialise struct objects with a non-zero number of parameters (ie. call init(...)), you can use either of the two syntax forms below, which are equivalent (Note that in the example below, String is a Flax Foundation struct type). Of course, you can still manually specify the type, but that just ends up being redundant, since you already specify the type name in calling the constructor.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var str: String("Hello, World")
+var str2 = String("This works the same way")
+</code></pre>
+</p>
+
+<p>
 To access members of structs, be it variables or functions, use the <span class="inline-code">.</span> operator. For convenience when working with structs in memory (at a low level), struct-pointers can also be accessed with the dot syntax, as mentioned above, without explicitly dereferencing the variable.
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 var answer: Int64 = guide2.calculateAnswer()	// call directly on pointer
@@ -329,48 +337,27 @@ The mangling of functions in struct types is very simple compared to the actual 
 
 </div>
 
-<!--
 
 
-<br/>
-#### Attributes ####
-This will be short, since there aren't a lot of attributes
-Attributes are declared using the '@name' syntax:
-
-```swift
-@nomangle func Foo(...) { ... }
-```
-In fact, 'private', 'internal' and 'public' are attributes with special syntax.
-User-defined attributes and some form of reflection (at runtime) are planned.
-
-<br />
-#### Control Flow ####
-If-else statements are supported, and naturally nestable.
-
-```swift
-var x: Int8 = 10
-if x > 20
-{
-	...
-}
-else if x < 5
-{
-	...
-}
-else
-{
-	...
-}
-```
 
 
-As you can see, parentheses around the conditional expression
-are optional.
-Furthermore, single-line C-style ifs like this
-are not supported, and will not be.
 
-```c
-if(cond)
-	doSomething();
 
-``` -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
