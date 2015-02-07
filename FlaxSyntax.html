@@ -14,13 +14,13 @@ Flax currently adopts a Swift-inspired syntax, which in turn is very much C-like
 Of course, you still can't place it in the middle of expressions. Speaking of which, expressions and statements are the same thing, and are not distinguished in this language.
 
 <br />
-There are 11 builtin types available for variables:
+There are 12 builtin types available for variables:
 </p>
 
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 Int8, Uint8, Int16, Uint16
 Int32, Uint32, Int64, Uint64
-Float32, Float64, Bool</code></pre>
+Float32, Float64, Bool, UintPtr</code></pre>
 
 
 <p>
@@ -102,7 +102,7 @@ printf("%p", qux)		// prints 0xFF20
 <hr />
 <header id="doc-functions"><h2>Functions</h2></header>
 <p>
-Functions are declared with the <span class="inline-code">func</span> keyword, proceeded by the function name, a list of arguments in parenteses, and finally the return type after a <span class="inline-code">-&gt;</span>. The return type can be omitted if the function returns Void (aka nothing).
+Functions are declared with the <span class="inline-code">func</span> keyword, proceeded by the function name, a list of arguments in parentheses, and finally the return type after a <span class="inline-code">-&gt;</span>. The return type can be omitted if the function returns Void (aka nothing).
 
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 func Foo(bar: Int64, qux: Int8*) -> Float64
@@ -279,7 +279,8 @@ loop {
 
 <p>
 As an aside, blocks without any keyword (eg. <span class="inline-code">{ printf("Hi") }</span>) will not be executed. To ensure that such a block is evaluated, preceed the block with either <span class="inline-code">do</span> or <span class="inline-code">loop</span>, depending on the effect you wish to achieve. An interesting tidbit is that all 3 of the above loops share the same AST node, and as such, you can do interesting things with them:
-<pre class="dcodesegment"><code class="lang-swift dcsinner">
+<pre class="dcodesegment">
+<code class="lang-swift dcsinner">
 do {
 	// executed once
 }
@@ -328,6 +329,43 @@ If a function takes no parameters, it is mangled as if it has a single parameter
 
 <header><h3>Functions in Structs</h3></header>
 The mangling of functions in struct types is very simple compared to the actual mangling of function names; the name of the struct is essentially just prepended to the mangled name of the function: <span class="inline-code">__struct#[structName]_[mangledFuncName]</span>
+</p>
+
+
+<hr />
+<header id="doc-alloc"><h2>Alloc and Dealloc</h2></header>
+<p>
+Flax has the <span class="inline-code">alloc</span> and <span class="inline-code">dealloc</span> keywords -- these are used to allocate and deallocate memory on the heap respectively. Currently they are fixed to calling <span class="inline-code">malloc()</span> and <span class="inline-code">free()</span>, although it is planned to be able to specify a custom name for these functions.
+</p>
+
+<p>
+To use <span class="inline-code">alloc</span>, place it on the right-hand side of an assignment statement. You can specify the number of elements to reserve space for, as well as pass arguments to the type's initialiser if it has one. As you might guess, <span class="inline-code">alloc</span> returns a pointer to the type and <span class="inline-code">dealloc</span> expects one as well.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var foo = alloc String				// 1 String
+var bar = alloc(4) String			// 4 Strings
+var qux = alloc(8) String("flob")	// 8 Strings and set them all to "flob"
+</code></pre>
+</p>
+
+<p>
+<span class="inline-code">dealloc</span> is used in a similar way, although it obviously cannot be assigned to anything. Simply write the name of the variable to deallocate after the <span class="inline-code">dealloc</span> keyword. Note that the compiler currently does not check whether what you are deallocating was actually allocated using <span class="inline-code">alloc</span>, and as such a bogus deallocation will trigger a runtime abort in your libc implementation of <span class="inline-code">free()</span>.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+dealloc foo
+dealloc bar
+dealloc qux
+</code></pre>
+</p>
+
+<p>
+What the compiler does do, however, is check for use-after-free scenarios. Note that it is currently very basic -- it might both trigger false positives, and fail to catch some instances. Nonetheless, it does a decent job.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var norf = alloc Int64
+#norf = 400
+dealloc norf
+
+printf("norf is %lld\n", norf)		// generates warning
+
+</code></pre>
 </p>
 
 
