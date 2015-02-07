@@ -166,7 +166,7 @@ struct FooBar
 
 
 <p>
-Structs can have 3 kinds of members: constructors and destructors, member variables, and functions (although theoretially init functions are still functions). Currently, the implementation of Flax limits member types to only variables and functions. Custom constructors can be specified, but currently cannot be overloaded and must take zero parameters. Destructors are not yet supported.
+Structs can have 3 kinds of members: constructors and destructors, member variables, and functions (although theoretially init functions are still functions). Currently, the implementation of Flax limits member types to only variables and functions. Custom constructors can be specified, and can be overloaded -- the appropriate one is chosen based on the arguments passed. Destructors are not yet supported.
 <br />
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 struct GuideToGalaxy
@@ -268,9 +268,7 @@ while someCondition
 }
 
 do {
-
 	// do stuff at least once, then only while someCondition is true
-
 } while(someCondition)
 
 loop {
@@ -334,7 +332,6 @@ The mangling of functions in struct types is very simple compared to the actual 
 
 
 </section>
-
 </div>
 
 
