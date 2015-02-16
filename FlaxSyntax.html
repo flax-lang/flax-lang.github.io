@@ -14,13 +14,15 @@ Flax currently adopts a Swift-inspired syntax, which in turn is very much C-like
 Of course, you still can't place it in the middle of expressions. Speaking of which, expressions and statements are the same thing, and are not distinguished in this language.
 
 <br />
-There are 12 builtin types available for variables:
+There are 14 builtin types available for variables:
 </p>
 
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 Int8, Uint8, Int16, Uint16
 Int32, Uint32, Int64, Uint64
-Float32, Float64, Bool, UintPtr</code></pre>
+Float32, Float64, Bool, UintPtr,
+Any, String
+</code></pre>
 
 
 <p>
@@ -82,7 +84,7 @@ var vgaPtrAgain: Int16* = &amp;firstByte	// take the address with '&amp;'
 <p>
 Naturally, pointers can be indexed into. No bounds-checking will be done, however -- it is planned.
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
-var foos: Int64* = alloc(4) Int64		// alloc explained below
+var foos: Int64* = alloc[4] Int64		// alloc explained below
 var foo: Int64 = foos[1]
 </code></pre>
 </p>
@@ -115,7 +117,7 @@ func Foo(bar: Int64, qux: Int8*) -> Float64
 <p>
 Naturally, the <span class="inline-code">return</span> keyword can be used to return a value from a function. Note that it is an error not to return a value in a function with a non-Void return value.
 <br />
-Implicit returns are planned, but are currently not implemented yet:
+Implicit returns are also supported -- if the type of the last expression in a function matches its return type, it will be treated as the implicit return value. It is most useful for single-line functions like the one below. Alternative, simpler syntax forms are being explored.
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 func mult(a: Float32, b: Float32) -> Float32 { a * b }
 </code></pre>
@@ -342,8 +344,8 @@ Flax has the <span class="inline-code">alloc</span> and <span class="inline-code
 To use <span class="inline-code">alloc</span>, place it on the right-hand side of an assignment statement. You can specify the number of elements to reserve space for, as well as pass arguments to the type's initialiser if it has one. As you might guess, <span class="inline-code">alloc</span> returns a pointer to the type and <span class="inline-code">dealloc</span> expects one as well.
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 var foo = alloc String				// 1 String
-var bar = alloc(4) String			// 4 Strings
-var qux = alloc(8) String("flob")	// 8 Strings and set them all to "flob"
+var bar = alloc[4] String			// 4 Strings
+var qux = alloc[8] String("flob")	// 8 Strings and set them all to "flob"
 </code></pre>
 </p>
 
@@ -364,10 +366,45 @@ var norf = alloc Int64
 dealloc norf
 
 printf("norf is %lld\n", norf)		// generates warning
-
 </code></pre>
 </p>
 
+
+<hr />
+<header id="doc-builtin-types"><h2>Builtin Types</h2></header>
+<p>
+
+Out of the 14 builtin types that Flax has, 12 are POD types (plain-old-data). 10 of them are integer types, while the other 2 are floating-point types. Their names should convey their semantics clearly, but in case it does not, the excerpt below exemplifies.
+
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+val i8: Int8		// -128                       to 127
+val u8: Uint8		// 0                          to 255
+val i16: Int16		// -32,768                    to 32,767
+val u16: Uint16		// 0                          to 65,535
+val i32: Int32		// −2,147,483,648             to 2,147,483,647
+val u32: Uint32		// 0                          to 4,294,967,295
+val i64: Int64		// −9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+val u64: Uint64		// 0                          to 18,446,744,073,709,551,615
+
+val f32: Float32	// single-precision float
+val f64: Float64	// double-precision float
+</code></pre>
+</p>
+
+<p>
+The string is also a builtin type, unlike other low-level languages such as C/C++. String literals enclosed in <span class="inline-code">" "</span> have a type of <span class="inline-code">String</span>, not <span class="inline-code">Int8*</span>. Actually, to be completely accurate, <span class="inline-code">String</span> is not exactly a builtin type, as it is completely defined in Flax code. However, the compiler will, instead of creating the typical <span class="inline-code">const char*</span> for a string literal, create a <span class="inline-code">String</span> instance with a pointer to the read-only string. Any modifications to this string will cause a heap allocation and a memcpy.
+
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var foo = "Hello"				// type: String
+var bar = foo + ", World!"		// creates new String for 'bar'
+</code></pre></p>
+
+<p>
+Internally, a <span class="inline-code">String</span> is simply a list of bytes. However, it fully supports Unicode using the UTF-8 encoding format. The <span class="inline-code">.length</span> field of a <span class="inline-code">String</span> instance will reflect the number of codepoints in the string as opposed to be number of bytes. For purely ASCII-based strings, the length remains the same.
+</p>
+
+<p>One final note about <span class="inline-code">Strings</span>: they're completely optional. By not having <span class="inline-code">import Foundation</span> in your code, you will not import the definition for the <span class="inline-code">String</span> class. Under these circumstances, the compiler will instead emit the traditional <span class="inline-code">const char*</span> for string literals. You are free to define your own string class that, for instance, does not touch the heap.
+</p>
 
 </section>
 </div>
