@@ -14,20 +14,24 @@ Flax currently adopts a Swift-inspired syntax, which in turn is very much C-like
 Of course, you still can't place it in the middle of expressions. Speaking of which, expressions and statements are the same thing, and are not distinguished in this language.
 
 <br />
-There are 14 builtin types available for variables:
+There are 16 builtin types available for variables:
 </p>
 
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 Int8, Uint8, Int16, Uint16
 Int32, Uint32, Int64, Uint64
 Float32, Float64, Bool, UintPtr,
-Any, String
+Int, Uint, Any, String
 </code></pre>
 
 
 <p>
-Note that integer literals have a type of <span class="inline-code">Int32</span>.
+Note that integer literals have a type of <span class="inline-code">Int64</span>.
 However, the compiler will automatically cast them into an appropriate type for the expression, if the destination type is big enough. An error will be thrown if, for instance, you are trying to do this: <span class="inline-code">var x: Int8 = 400</span>
+</p>
+
+<p>
+As an aside, <span class="inline-code">Int</span> and <span class="inline-code">Uint</span> are simply aliases for <span class="inline-code">Int64</span> and <span class="inline-code">Uint64</span> respectively. They are not treated as distinct types, and in fact are aliased in the very early stages of code generation.
 </p>
 
 
