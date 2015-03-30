@@ -6,24 +6,40 @@
 
 <section>
 
-
-<header id="doc-general"><h2>General Syntax and Types</h2></header>
+<header id="doc-builtin-types"><h2>Builtin Types</h2></header>
 <p>
-Flax currently adopts a Swift-inspired syntax, which in turn is very much C-like. It also ignores semicolons. It's not entirely true to say that they're optional, rather they're just ignored as a syntactic token.
-<br />
-Of course, you still can't place it in the middle of expressions. Speaking of which, expressions and statements are the same thing, and are not distinguished in this language.
 
-<br />
-There are 16 builtin types available for variables:
-</p>
+Out of the 14 builtin types that Flax has, 12 are POD types (plain-old-data). 10 of them are integer types, while the other 2 are floating-point types. Their names should convey their semantics clearly, but in case it does not, the excerpt below exemplifies.
 
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
-Int8, Uint8, Int16, Uint16
-Int32, Uint32, Int64, Uint64
-Float32, Float64, Bool, UintPtr,
-Int, Uint, Any, String
-</code></pre>
+val i8: Int8		// -128                       to 127
+val u8: Uint8		// 0                          to 255
+val i16: Int16		// -32,768                    to 32,767
+val u16: Uint16		// 0                          to 65,535
+val i32: Int32		// −2,147,483,648             to 2,147,483,647
+val u32: Uint32		// 0                          to 4,294,967,295
+val i64: Int64		// −9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+val u64: Uint64		// 0                          to 18,446,744,073,709,551,615
 
+val f32: Float32	// single-precision float
+val f64: Float64	// double-precision float
+</code></pre>
+</p>
+
+<p>
+The string is also a builtin type, unlike other low-level languages such as C/C++. String literals enclosed in <span class="inline-code">" "</span> have a type of <span class="inline-code">String</span>, not <span class="inline-code">Int8*</span>. Actually, to be completely accurate, <span class="inline-code">String</span> is not exactly a builtin type, as it is completely defined in Flax code. However, the compiler will, instead of creating the typical <span class="inline-code">const char*</span> for a string literal, create a <span class="inline-code">String</span> instance with a pointer to the read-only string. Any modifications to this string will cause a heap allocation and a memcpy.
+
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+var foo = "Hello"				// type: String
+var bar = foo + ", World!"		// creates new String for 'bar'
+</code></pre></p>
+
+<p>
+Internally, a <span class="inline-code">String</span> is simply a list of bytes. However, it fully supports Unicode using the UTF-8 encoding format. The <span class="inline-code">.length</span> field of a <span class="inline-code">String</span> instance will reflect the number of codepoints in the string as opposed to be number of bytes. For purely ASCII-based strings, the length remains the same.
+</p>
+
+<p>One final note about <span class="inline-code">Strings</span>: they're completely optional. By not having <span class="inline-code">import Foundation</span> in your code, you will not import the definition for the <span class="inline-code">String</span> class. Under these circumstances, the compiler will instead emit the traditional <span class="inline-code">const char*</span> for string literals. You are free to define your own string class that, for instance, does not touch the heap.
+</p>
 
 <p>
 Note that integer literals have a type of <span class="inline-code">Int64</span>.
@@ -172,7 +188,7 @@ struct FooBar
 
 
 <p>
-Structs can have 3 kinds of members: constructors and destructors, member variables, and functions (although theoretially init functions are still functions). Currently, the implementation of Flax limits member types to only variables and functions. Custom constructors can be specified, and can be overloaded -- the appropriate one is chosen based on the arguments passed. Destructors are not yet supported.
+Structs can have 4 kinds of members: constructors and destructors, member variables, computed properties, and functions (although theoretially init functions are still functions). Custom constructors can be specified, and can be overloaded -- the appropriate one is chosen based on the arguments passed. However, currently destructors are not yet supported.
 <br />
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 struct GuideToGalaxy
@@ -183,10 +199,10 @@ struct GuideToGalaxy
 	// You can declare an init() function yourself
 	init()
 	{
-		self.theAnswer = (6 * 7) * self.billionsOfPeopleOnEarth
+		self.theAnswer = self.billionsOfPeopleOnEarth * 6
 	}
 
-	func calculateAnswer() -> Int64
+	func getAnswer() -> Int64
 	{
 		return self.theAnswer
 	}
@@ -220,6 +236,98 @@ var answer: Int64 = guide2.calculateAnswer()	// call directly on pointer
 guide1.billionsOfPeopleOnEarth -= 4				// asteroid?
 </code></pre>
 </p>
+
+
+
+<hr />
+<header id="doc-arrays"><h2>Static Functions</h2></header>
+<p>
+Member functions (methods) can be marked with the <span class="inline-code">static</span> keyword, to indicate that they should be called without needing an instance of the object they belong to. As such, they are accessed using dot-syntax on the name of the type itself, instead of an instance variable. As a sidenote, they can be called on the <span class="inline-code">self</span> instance as well.
+
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+struct Bar
+{
+	static func doStaticThings() -> Int
+	{
+		println("Things of a static nature")
+		return 58
+	}
+}
+
+// ---------
+val staticResult = Bar.doStaticThings()
+
+val bar: Bar
+bar.doStaticThings()		// also legal, the value of 'bar' is not used
+
+</code></pre>
+</p>
+
+<hr />
+<header id="doc-arrays"><h2>Nested Types</h2></header>
+<p>
+You can declare types inside another type, and they function intuitively. They can be qualified with the <span class="inline-code">private</span> access attribute to make them visible only to members of the enclosing class.
+
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+struct Bar
+{
+	var norf: Int = 1600
+	var yorg: Int = 5000
+	var goop: Int = 6810
+
+	struct Nested
+	{
+		var g: Int = 500
+
+		struct Nest2
+		{
+			var m: Int = 230
+			func doStuff() -> Int
+			{
+				println("Doing some stuff...")
+				return m * 7
+			}
+
+			static func nestedStaticFunction() -> Float
+			{
+				return 3.141593
+			}
+		}
+
+		func doStuff() -> Int
+		{
+			printf("in stuff(): self is %x\n", self)
+			return g / 3
+		}
+	}
+}
+
+</code></pre>
+</p>
+
+
+<p>
+Since the struct definitions for <span class="inline-code">Nested</span> and <span class="inline-code">Nest2</span> are publicly accessible (by default), you can declare variables of that type.
+
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+val foo: Bar.Nested
+printf("[%d]\n", foo.doStuff())
+</code></pre>
+</p>
+
+<p>
+Static functions inside nested types are accessed using dot-syntax as well, in an intuitive manner.
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+val result = Bar.Nested.Nest2.nestedStaticFunction()
+printf("%f\n", result)			// 3.14159263
+</code></pre>
+</p>
+
+
+
+
+
+
 
 <hr />
 <header id="doc-arrays"><h2>Arrays</h2></header>
@@ -374,41 +482,67 @@ printf("norf is %lld\n", norf)		// generates warning
 </p>
 
 
-<hr />
-<header id="doc-builtin-types"><h2>Builtin Types</h2></header>
-<p>
 
-Out of the 14 builtin types that Flax has, 12 are POD types (plain-old-data). 10 of them are integer types, while the other 2 are floating-point types. Their names should convey their semantics clearly, but in case it does not, the excerpt below exemplifies.
+<hr />
+<header id="doc-alloc"><h2>Deferred Statements</h2></header>
+<p>
+Deferred statements are declared using the <span class="inline-code">defer &lt;expr&gt;</span> syntax, where the expression can be anything. Note that while any expression can be deferred, including the declaration of types, arithmetic operations, as well as variable declarations, it does not make sense to use it for such purposes, even though the compiler will accept it.
+
+Deferment operates on the braced-block scopes. Functions, If-else bodies and closures are all examples of braced-block scopes. When an expression is deferred, it will only be evaluated when the block closes, after the rest of the block.
+
+Note that all deferred expressions will be evaluated before any return is executed.
 
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
-val i8: Int8		// -128                       to 127
-val u8: Uint8		// 0                          to 255
-val i16: Int16		// -32,768                    to 32,767
-val u16: Uint16		// 0                          to 65,535
-val i32: Int32		// −2,147,483,648             to 2,147,483,647
-val u32: Uint32		// 0                          to 4,294,967,295
-val i64: Int64		// −9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
-val u64: Uint64		// 0                          to 18,446,744,073,709,551,615
+func foo()
+{
+	defer printf("second")
+	printf("first, ")
 
-val f32: Float32	// single-precision float
-val f64: Float64	// double-precision float
+	// prints "first, second"
+}
 </code></pre>
 </p>
 
 <p>
-The string is also a builtin type, unlike other low-level languages such as C/C++. String literals enclosed in <span class="inline-code">" "</span> have a type of <span class="inline-code">String</span>, not <span class="inline-code">Int8*</span>. Actually, to be completely accurate, <span class="inline-code">String</span> is not exactly a builtin type, as it is completely defined in Flax code. However, the compiler will, instead of creating the typical <span class="inline-code">const char*</span> for a string literal, create a <span class="inline-code">String</span> instance with a pointer to the read-only string. Any modifications to this string will cause a heap allocation and a memcpy.
+When multiple expressions are deferred in a block, they are evaluated in the reverse order that they were declared. As such, it is comparable to a stack structure.
 
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
-var foo = "Hello"				// type: String
-var bar = foo + ", World!"		// creates new String for 'bar'
-</code></pre></p>
+func foo()
+{
+	defer printf("04")
+	defer printf("03, ")
+	defer printf("02, ")
+	printf("01, ")
+
+	// prints "01, 02, 03, 04"
+}
+</code></pre>
+</p>
 
 <p>
-Internally, a <span class="inline-code">String</span> is simply a list of bytes. However, it fully supports Unicode using the UTF-8 encoding format. The <span class="inline-code">.length</span> field of a <span class="inline-code">String</span> instance will reflect the number of codepoints in the string as opposed to be number of bytes. For purely ASCII-based strings, the length remains the same.
+As previously mentioned, anything is deferrable. The examples below are completely legal, and will function exactly as expected:
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+
+func foo() -> Int
+{
+	defer i += 58
+
+	var i = 27
+	return i		// returns 85
+}
+
+// ---------------
+// no more ):
+
+</code></pre>
 </p>
 
-<p>One final note about <span class="inline-code">Strings</span>: they're completely optional. By not having <span class="inline-code">import Foundation</span> in your code, you will not import the definition for the <span class="inline-code">String</span> class. Under these circumstances, the compiler will instead emit the traditional <span class="inline-code">const char*</span> for string literals. You are free to define your own string class that, for instance, does not touch the heap.
-</p>
+
+
+
+
+
+
 
 </section>
 </div>
