@@ -94,7 +94,7 @@ var vga: Int16* = 0xB8000 as Int16*
 
 
 <p>
-Taking the address of a variable, as well as dereferencing a pointer, have an easy-to-remember syntax as well:
+Taking the address of a variable, as well as dereferencing a pointer, has an easy-to-remember syntax as well:
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 var firstByte: Int16 = #vga				// dereference with '#'
 var vgaPtrAgain: Int16* = &amp;firstByte	// take the address with '&amp;'
@@ -103,7 +103,7 @@ var vgaPtrAgain: Int16* = &amp;firstByte	// take the address with '&amp;'
 
 
 <p>
-Naturally, pointers can be indexed into. No bounds-checking will be done, however -- it is planned.
+Naturally, pointers can be indexed into. No bounds-checking will be done, however; it is planned.
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 var foos: Int64* = alloc[4] Int64		// alloc explained below
 var foo: Int64 = foos[1]
@@ -167,6 +167,44 @@ printf(45.5 as Float32)	// 45.5 is a Float32
 </code></pre>
 </p>
 
+
+<p>
+Sometimes, function overloads can be ambiguous, as in the example below:
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+
+func overload(a: Int8*, b: String)		{ printf("overload: (int8*, string)\n") }
+func overload(a: String, b: Int8*)		{ printf("overload: (string, int8*)\n") }
+
+overload("hello", "world")
+
+</code></pre>
+The <span class="inline-code">String</span> type is automatically converted to and from <span class="inline-code">Int8*</span> expressions as required. As such, the snippet above will trigger a compile-time error; the first argument can be converted to <span class="inline-code">Int8*</span>, or the second argument can be converted. In this case, the compiler will throw and error.
+</p>
+
+<p>
+However, not all such cases are ambiguous; the compiler resolves overloading through a system of 'casting distance'. The compiler examines all possible candidates with a given name, and determines the 'distance' in terms of typecasting to get from the provided arguments to those wanted by the candidate function. for instance:
+
+<pre class="dcodesegment"><code class="lang-swift dcsinner">
+
+func overload(a: Int8)	{ printf("overload: (int8)\n"); }
+func overload(a: Int64)	{ printf("overload: (int64)\n"); }
+
+// ...
+
+let k: Int16 = 500
+overload(k)
+</code></pre>
+
+The above snippet will print <span class="inline-code">"overload: (int8)"</span>. The casting distance, explained below, from <span class="inline-code">Int16</span> to <span class="inline-code">Int8</span> is smaller than that from <span class="inline-code">Int16</span> to <span class="inline-code">Int64</span>, so the former overload is chosen.
+<br />
+The compiler will always choose the candidate with the smallest casting distance, and only throws an error if there is more than one function with the same, smallest distance. This behaviour always finds the best candidate, and is not affected by the ordering of functions.
+
+<br />
+<br />
+There are currently 3 kinds of automatic casting done by the compiler: integer promotion to a larger bit width, string-to-int8* and vice-versa, as well as int-to-float promotion. The former has 3 'distances' defined; <span class="inline-code">Int8</span> to <span class="inline-code">Int16</span> has a distance of 1, <span class="inline-code">Int8</span> to <span class="inline-code">Int32</span> a distance of 2, and so on.
+<br />
+For string-to-int8* conversion, both directions have a distance of 2. For int-to-float promotion, the distance is 10.
+</p>
 
 
 
