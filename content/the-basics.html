@@ -114,7 +114,7 @@ var currentLoginAttempt = 0</code></pre>
 			</p>
 
 			<aside class="note">
-				<p class="note-title" />
+				<p class="note-title">Note</p>
 				<p class="note-content">If a stored value in your code is not going to change, always declare it as a constant with the let
 				keyword. Use variables only for storing values that need to be able to change.
 				</p>
@@ -165,7 +165,7 @@ welcomeMessage = "Hello"</code></pre>
 
 
 			<aside class="note">
-				<p class="note-title" />
+				<p class="note-title">Note</p>
 				<p class="note-content">
 				It is rare that you need to write type annotations in practice. If you provide an initial value for a constant or variable at the
 				point that it is defined, the compiler can almost always infer the type to be used for that constant or variable. In the
@@ -279,7 +279,7 @@ this is the end of the first multiline comment */</code></pre>
 			</p>
 
 			<aside class="note">
-				<p class="note-title" />
+				<p class="note-title">Note</p>
 				<p class="note-content">
 				The nested-comment example only looks screwed-up because prism.js doesn't handle it properly. Rest assured it works properly
 				in the compiler.
@@ -397,7 +397,7 @@ let u64Max = Uint64.max		// 18,446,744,073,709,551,615</code></pre>
 
 
 			<aside class="note">
-				<p class="note-title" />
+				<p class="note-title">Note</p>
 				<p class="note-content">
 				For general code, use <code>Uint</code> only when you specifically need an unsigned integer type with the same size as the
 				platform’s native word size. If this is not the case, Int is preferred, even when the values to be stored are known to be
@@ -440,7 +440,7 @@ let u64Max = Uint64.max		// 18,446,744,073,709,551,615</code></pre>
 			</p>
 
 			<aside class="note">
-				<p class="note-title" />
+				<p class="note-title">Note</p>
 				<p class="note-content">
 				<code>Float64</code> has a precision of at least 15 decimal digits, whereas the precision of <code>Float32</code> can be as
 				little as 6 decimal digits. The appropriate floating-point type to use depends on the nature and range of values you need to work
@@ -461,6 +461,178 @@ let u64Max = Uint64.max		// 18,446,744,073,709,551,615</code></pre>
 			<h3 class="subcontent-header" id="types-and-inference">Types and Type Inference</h3>
 			<h3 class="anchor-clicker"></h3><p>
 
+			Types are the basis of every sane programming language. Everything has a type -- expressions, variables, and functions, to
+			name a few. Since types play such a fundamental role in the language, the usage of these types must be made as easy as
+			possible, and the possibility of making mistakes must be reduced as far as possible.
+			</p>
+
+			<h4 class="subcontent-header" id="type-safety">Type Safety</h3>
+			<h4 class="anchor-clicker"></h4><p>
+
+			Flax is a statically-typed language; that is to say, the types of all expressions and variables are known at compile-time.
+			As such, the compiler is able to provide <i>type-safety</i>, in contrast to other languages such as Python <i>(ew)</i> that
+			might throw runtime errors when mismatched types are found. This ensures that <i>good</i>, <i>helpful</i> error messages
+			are given to the programmer as early as possible, to reduce the occurrence of mistakes.
+			</p>
+
+
+			<h4 class="subcontent-header" id="type-inference">Type Inference</h3>
+			<h4 class="anchor-clicker"></h4><p>
+
+			However, often times type safety comes at a cost of having to specify or <i>annotate</i> variables and expressions with explicit
+			types. In Flax, the compiler is capable of inferring, to a basic degree, the appropriate type based on what is going on. Note that
+			this does not in any way diminish the type-safety of Flax -- the types are all present, except they are automatically deduced by
+			the compiler instead of needing to be manually specified.
+			</p>
+
+
+			<p>
+			One of the places where type inference is most useful is when assigning initial values to variables or constants. In such cases, the
+			type of the variable is quite evident based on the right-hand-side of the assignment, and explicit types do not have to be specified:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let meaningOfLife = 42
+// meaningOfLife is inferred to be of type Int</code></pre>
+
+
+			<p>
+			As you might have guessed, integer literals are always inferred to have type <code>Int</code>. Naturally, when explicit types are
+			provided on the variable, the literal is automatically coerced into the correct type:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let someByte: Uint8 = 61
+// 61 is converted to Uint8 first, then assigned to someByte</code></pre>
+
+
+			<p>
+			Similarly, floating point literals are always inferred to have type <code>Double</code>:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let someFloat = 3.1415
+// someFloat is inferred to be of type Double</code></pre>
+
+
+
+			<aside class="note">
+				<p class="note-title">Future</p>
+				<p class="note-content">
+				Flax currently does not have facilities for whole-program type inference, namely something like a
+				<a href="https://en.wikipedia.org/wiki/Hindley–Milner_type_system">Hindley-Milner type</a> inference system. Type inference
+				currently is limited to simple, expression-based inference. For external-facing code, such as functions, types must still be
+				annotated.
+				</p>
+			</aside>
+
+
+
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="numeric-literals">Numeric Literals</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			There are currently three main forms of numeric literals supported in Flax: integer literals, floating-point literals, and
+			hexadecimal literals. The first two have already been introduced, but hexadecimal literals are, at their heart, just another
+			representation for integer literals:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let someInt = 240
+let someHex = 0xF0
+// someInt === someHex</code></pre>
+
+			<p>
+			As can be seen, hexadecimal literals can be expressed by prefixing the number with <code>0x</code>, and the proceeding digits can
+			range from <code>0</code> to <code>F</code>, as opposed to <code>0</code> to simply <code>9</code> with decimal numbers.
+			</p>
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="implicit-type-coercion">Implicit Type Coercion</h3>
+			<h4 class="anchor-clicker"></h4><p>
+
+			To reduce the friction experienced by the programmer, the Flax compiler allows several implicit type coercions, ie. allowing types
+			to be converted to-and-from each other without explicit casts. These implicit coercions are similar in nature to those in C or C++.
+			</p>
+
+			<p>
+			These coercions fall under three main categories: <code>Int</code> to <code>Int</code>, <code>Int</code> to <code>Float</code>, and
+			polymorphic coercions. The latter will be discussed in a later section.
+			</p>
+
+			<p>
+			<code>Int</code> to <code>Int</code> coercions mainly involve up-casting, or increasing the bitwidth, of an integer. For example,
+			a function accepting an <code>Int64</code> argument can be passed a variable of type <code>Int8</code>, because it can be safely
+			coerced into an <code>Int64</code> without loss of data.
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let someSmallInt: Int8 = 50
+func eatLargeInt(someInt: Int64)
+{
+	// ...
+}
+
+eatLargeInt(someSmallInt) // okay</code></pre>
+
+			<p>
+			Similarly, <code>Int</code> types can also be implicitly coerced into floating-point types without losing data. As such, the
+			following code will compile and run without errors:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+func eatDouble(db: Double)
+{
+	// ...
+}
+
+eatDouble(10) // okay</code></pre>
+
+			<p>
+			In this case, <code>10</code> becomes <code>10.0</code>.
+
+
+
+
+
+			<h3 class="subcontent-header" id="booleans">Booleans</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Boolean values in Flax are a logical type -- they can either have a value of <code>true</code>, or a value of <code>false</code>.
+			Naturally, <code>true</code> and <code>false</code> are constants provided by the compiler, with a type of <code>Bool</code>.
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let pigsCanFly = false
+let skyIsBlue = true</code></pre>
+
+			<p>
+			In the example above, both the constants <code>pigsCanFly</code> and <code>skyIsBlue</code> were inferred to have a type of
+			<code>Bool</code>, since they were initialised with boolean literals.
+			</p>
+
+			<p>
+			Boolean types are often used to control the flow of the program, through constructs such as <code>if</code>-statements or
+			<code>while</code>-loops. Both will be explored later.
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+if pigsCanFly
+{
+	printf("What just happened??\n")
+}
+else
+{
+	printf("All is well with the world.\n")
+}</code></pre>
 
 
 
@@ -471,9 +643,207 @@ let u64Max = Uint64.max		// 18,446,744,073,709,551,615</code></pre>
 
 
 
+
+
+
+
+
+			<h3 class="subcontent-header" id="typealiases">Type Aliases</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Type aliases define an alternative name for an existing type. type aliases are defined with the typealias keyword.
+			</p>
+
+			<p>
+			Type aliases are useful when you want to refer to an existing type by a name that is contextually more appropriate, such as when
+			working with data of a specific size from an external source:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+typealias AudioSample = UInt16</code></pre>
+
+
+			<p>
+			Once you define a type alias, you can use the alias anywhere you might use the original name:
+			</p>
+
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+var maxAmplitudeFound = AudioSample.min
+// maxAmplitudeFound is now 0</code></pre>
+
+			<p>
+			Here, <code>AudioSample</code> is defined as an alias for <code>Uint16</code>. Because it is an alias, referencing
+			<code>AudioSample.min</code> actually references Uint16.min, which provides an initial value of 0 for the
+			<code>maxAmplitudeFound</code> variable.
+			</p>
+
+
+
+			<h4 class="subcontent-header" id="typealiases-weak-strong">Strong vs. Weak Type Aliases</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			In Flax, there are two kinds of type aliases -- weak and strong type aliases. By default, typealiases are defined as
+			weak aliases. This means that it the aliased types are not treated as distinct types, and you can assign between them:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+typealias Kilometres = Int
+var orbitalPerigeeOfISS: Kilometres = 409	// assignment is transparent
+let someRandomInt = 40
+
+orbitalPerigeeOfISS = someRandomInt			// allowed</code></pre>
+
+
+			<p>
+			However, this might not be the most appropriate behaviour. If distiction is required, mark the typealias with the
+			<code>@strong</code> attribute. When an alias is strongly typed, any attempt to assign a value that is not of the new type
+			will result in a compile-time error. Reusing the example above:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+@strong typealias Kilometres = Int
+var orbitalPerigeeOfISS: Kilometres = 409	// intial assigment is transparently handled
+let someRandomInt = 40
+
+orbitalPerigeeOfISS = someRandomInt			// error: assigning type Int to var of type Kilometres</code></pre>
+
+
+			<aside class="note">
+				<p class="note-title">Future</p>
+				<p class="note-content">
+				Type aliases are currently heavily feature-regressed in the compiler. Strong type aliases might become the default form
+				of aliases in the future.
+				</p>
+			</aside>
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="tuples">Tuples</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			<i>Tuples</i> are a convenient way to group multiple values into a single construct that is easy to manipulate and pass around
+			to other pieces of code. The components of a tuple can have distinct or similar types, and tuples can have any number of member
+			types.</p>
+
+			<p>
+			In this example, <code>(404, "Not Found")</code> is a tuple that describes an HTTP status code. An HTTP status code is a special
+			value returned by a web server whenever you request a web page. A status code of 404 Not Found is returned if you request a webpage
+			that doesn’t exist.
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let http404Error = (404, "Not Found")
+// http404Error has type (Int, String)</code></pre>
+
+			<p>
+			The <code>http404Error</code> tuple provides a convenient way to group two related values together: the numerical error code,
+			<code>404</code>, as well as a human-readable error message, <code>"Not Found"</code>.
+			</p>
+
+
+			<p>
+			Tuples are the preferred way to return two related values from a function, as opposed to traditional C-like methods such as
+			passing pointers to functions. Currently, the constituent values in tuples can be accessed by using the dot operator and a zero-based
+			index:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let numError = http404Error.0
+let strError = http404Error.1
+
+printf("Encountered HTTP Error %d, %s\n", numError, strError)
+// prints "Encountered HTTP Error 404, Not Found".</code></pre>
+
+
+			<p>
+			Naturally, if you try <code>someTuple.3</code> in a tuple with only 3 elements, the compiler will give an error, since there is no
+			fourth element in the tuple.
+			</p>
+
+
+			<p>
+			</p>
+
+
+			<aside class="note">
+				<p class="note-title">Future</p>
+				<p class="note-content">
+				Tuple decomposition (eg. <code>let (x, y) = someTuple</code>) is currently not supported, but will be in the future. Right now
+				this dot-operator method is the only way to access tuple members.
+				</p>
+			</aside>
+
+			<aside class="note">
+				<p class="note-title">Future</p>
+				<p class="note-content">
+				Named tuples are also not supported, but will be in the future. Numerical indices only, for now.
+				</p>
+			</aside>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="pointers">Pointers</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			The final piece in the puzzle of Flax's basic types is pointers. Through pointers, Flax offers unparalleled low-level power,
+			allowing for the manipulation of raw memory, with facilities such as pointer arithmetic, to aid in this process.
+			</p>
+
+			<p>
+			The behaviour of pointers in Flax is similar to that in C and C++. You can take the address of variables on the stack, pass
+			pointers to functions, etc. Of course, pointers allow one to subvert the type system through type-casting, and thus should be used
+			with care.
+			</p>
+
+			<p>
+			Pointer types are declared by adding <code>*</code>s after the type that is pointed to. Naturally, multiple indirections are
+			supported. Taking the address is done with <code>&amp;</code>, and dereferencing is done with <code>#</code>.
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+var someVariable = 40
+
+var somePtr: Int* = &amp;someVariable;
+someVariable += 1
+
+printf("%d\n", #somePtr)
+// prints "41"</code></pre>
+
+
+
+			<div class="next-prev-footer">
+
+			<div class="footer-prev"><a href="intro-page.html"><i class="fa fa-caret-left"></i> Introduction to Flax</a></div>
+			<div class="footer-next"><a href="basic-operators.html">Basic Operators <i class="fa fa-caret-right"></i></a></div>
+
+			</div>
 
 
 			</div>
+
+
 
 		</div>
 		</div>
