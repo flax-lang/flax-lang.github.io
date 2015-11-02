@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Flax Programming Language</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+
+		<script src="js/jquery.min.js"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/init.js"></script>
+
+		<noscript>
+			<link rel="stylesheet" href="css/skel.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-desktop.css" />
+			<link rel="stylesheet" href="css/style-noscript.css" />
+		</noscript>
+
+		<link rel="stylesheet" href="css/prism.css" />
+		<script src="js/prism.js"></script>
+
+		<script>
+			$.get("FlaxSyntax.html", function(response)
+			{
+				$("#flaxsyntaxdoc").html(response);
+				Prism.highlightAll();
+			});
+		</script>
+	</head>
+	<body>
+
+		<!-- Wrapper-->
+			<div id="wrapper">
+
+				<!-- Nav -->
+					<nav id="nav">
+						<a href="#me" class="icon fa-home active"><span>Home</span></a>
+						<a href="#features" class="icon fa-flask"><span>Features</span></a>
+						<a href="#syntax" class="icon fa-indent"><span>Syntax</span></a>
+						<a href="#about" class="icon fa-slack"><span>About Flax</span></a>
+						<a href="#contribute" class="icon fa-code-fork"><span>Github</span></a>
+					</nav>
+
+					<!-- Main -->
+					<div id="main">
+
+							<!-- Frontpage -->
+							<article id="me" class="panel">
+								<header>
+									<h1>Flax</h1>
+									<p>Clean | Low-level | Portable</p>
+								</header>
+								<a href="#features" class="jumplink pic">
+									<span class="arrow icon fa-chevron-right"></span>
+									<!-- <img src="images/me.jpg" alt="" /> -->
+									<pre class="codesegment-main"><code class="lang-swift csinner-main">
+import Foundation
+func main(argc: Int32, argv: Int8**) -> Int32
+{
+	var foo: Greeter
+	printf("%s\n", foo.greet())
+}
+
+struct Greeter
+{
+	func volume() -> Int8*
+	{
+		return "Hello, World!"
+	}
+}
+									</code></pre>
+								</a>
+							</article>
+
+
+							<!-- Features -->
+							<article id="features" class="panel">
+								<section class="separated">
+									<pre class="codesegment"><code class="lang-swift csinner">
+// Semicolons are ignored
+var foo: Int64 = 50
+var bar: Int32* = alloc[4] Int32
+									</code></pre>
+									<header>
+										<h2>Clean Syntax</h2>
+									</header>
+									<p>
+										Expressive and Concise (soon)
+									</p>
+								</section>
+								<div><hr /></div>
+								<section class="separated">
+									<pre class="codesegment"><code class="lang-swift csinner">
+// Raw memcpy()
+memcpy(0xB8000 as Int8*, (0xB8000 as Int16*)
++ (cy - 24) * 80, (49 - cy) * 80 * 2)
+
+// Raw pointers
+#(0x2504 as Int64*) = 0x60000
+									</code></pre>
+									<header><h2>Raw Power</h2></header>
+									<p>
+										Perform low-level tasks, like pointer manipulation
+									</p>
+								</section>
+								<div><hr /></div>
+								<section class="separated">
+									<pre class="codesegment"><code class="lang-c csinner">
+// OS-independent library
+import Foundation
+
+// requires (in libc)
+int malloc(size_t size)
+int free(void* ptr)
+int printf(const char* fmt, ...)
+									</code></pre>
+									<header><h2>Portable Stdlib</h2></header>
+									<p>
+										<ul>
+										<li>Flax's stdlib is written entirely in itself</li>
+										<li>Compiled Flax programs only need the libc to run</li>
+										</ul>
+									</p>
+								</section>
+							</article>
+
+
+							<!-- Syntax -->
+							<article id="syntax" class="panel">
+								<div id="flaxsyntaxdoc"></div>
+							</article>
+
+							<!-- About -->
+							<article id="about" class="panel">
+								<header>
+									<h2>Language Goals</h2>
+								</header>
+
+								<hr />
+								<p>
+								Flax is a systems programming language. Not for backend "systems", but for real, low-level systems. Its main target is the OSDev community, positioned as a replacement for traditional languages that monopolise this field, like C and C++.
+
+								</p>
+
+								<p>
+								Naturally, a few features distinguish it from C++ and various other high-level languages:
+
+								<ul>
+								<li><span class="icon fa-caret-right">&nbsp; Clean syntax without thrown-in afterthoughts</span></li>
+								<li><span class="icon fa-caret-right">&nbsp; High expressibility while still maintaining raw control</span></li>
+								<li><span class="icon fa-caret-right">&nbsp; Ease of portability, especially the standard library</span></li>
+								<li><span class="icon fa-caret-right">&nbsp; LLVM backend ensures Flax can target nearly any platform</span></li>
+								</ul>
+								</p>
+							</article>
+
+							<!-- Github -->
+							<article id="contribute" class="panel">
+								<header>
+									<h2>Contribute to the development of Flax!</h2>
+									<h4><a href="https://github.com/flax-lang/flax" style="text-decoration: none">Github Page</a></h4>
+								</header>
+								<hr />
+
+								<h3>Pull Requests</h3>
+								<ul>
+								<li><span class="icon fa-caret-right">&nbsp; Fork Flax on Github</li>
+								<li><span class="icon fa-caret-right">&nbsp; Create a branch, feature/name</li>
+								<li><span class="icon fa-caret-right">&nbsp; Submit a pull request</li>
+								</ul>
+
+								<h3>Bug Reports</h3>
+								<ul>
+								<li><span class="icon fa-caret-right">&nbsp; Find a reproducible test case</li>
+								<li><span class="icon fa-caret-right">&nbsp; File an issue on Github</li>
+								</ul>
+
+								<h3>Suggestions</h3>
+								<ul>
+								<li><span class="icon fa-caret-right">&nbsp; Come up with a neat idea to improve Flax</li>
+								<li><span class="icon fa-caret-right">&nbsp; Ideas can be syntax ideas, new constructs, anything!</li>
+								<li><span class="icon fa-caret-right">&nbsp; Create an issue on Github, tag it with 'improvement'</li>
+								<li><span class="icon fa-caret-right">&nbsp; Explain why your idea is a good one</li>
+								</ul>
+							</article>
+
+					</div>
+
+				<!-- Footer -->
+					<div id="footer">
+						<ul class="copyright">
+							<li>&copy; zhiayang@gmail.com</li><li><a href="https://github.com/requimrar">Github</a></li>
+						</ul>
+					</div>
+
+			</div>
+	</body>
+</html>

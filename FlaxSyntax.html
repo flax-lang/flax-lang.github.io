@@ -63,7 +63,7 @@ var qux					// illegal, cannot infer type
 </p>
 
 <p>
-When no explicit initialiser is given, variables are initialised to a zero value that is appropriate. Pointers and integers get 0, while aggregated types (structs, classes) will have their <span class="inline-code">__automatic_init()</span> function called (explained below), unless explicitly specified with an attribute.
+When no explicit initialiser is given, variables are initialised to a zero value that is appropriate. Pointers and integers get 0, while aggregated types (structs, classes) will have their <span class="inline-code">__auto_init__()</span> function called (explained below), unless explicitly specified with an attribute.
 <pre class="dcodesegment"><code class="lang-swift dcsinner">
 var qux: Int64			// implicit 'qux = 0'
 </code></pre>
@@ -249,7 +249,7 @@ struct GuideToGalaxy
 </code></pre>
 <br />
 <p>
-If you remember the <span class="inline-code">__automatic_init()</span> previously mentioned, here is where it comes into play: it is called to ensure a zero-value on all member variables in a struct instance, as well as to actually assign the inline initialiser values. To disable this for whatever reason (and to leave it uninitialised), use the <span class="inline-code">@noautoinit</span> attribute. Note that this only applies to struct types, and has no effect on variables with a primitive type.
+If you remember the <span class="inline-code">__auto_init__()</span> previously mentioned, here is where it comes into play: it is called to ensure a zero-value on all member variables in a struct instance, as well as to actually assign the inline initialiser values. To disable this for whatever reason (and to leave it uninitialised), use the <span class="inline-code">@noautoinit</span> attribute. Note that this only applies to struct types, and has no effect on variables with a primitive type.
 </p>
 
 <p>

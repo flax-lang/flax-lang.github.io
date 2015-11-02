@@ -1,21 +1,21 @@
-/* http://prismjs.com/download.html?themes=prism-okaidia&languages=clike+bash+c+cpp+swift */
+/* http://prismjs.com/download.html?themes=prism-coy&languages=markup+clike+c+csharp+cpp+haskell+makefile+markdown+swift */
 /**
- * okaidia theme for JavaScript, CSS and HTML
- * Loosely based on Monokai textmate theme by http://www.monokai.nl/
- * @author ocodia
+ * prism.js Coy theme for JavaScript, CoffeeScript, CSS and HTML
+ * Based on https://github.com/tshedor/workshop-wp-theme (Example: http://workshop.kansan.com/category/sessions/basics or http://workshop.timshedor.com/category/sessions/basics);
+ * @author Tim  Shedor
  */
 
 code[class*="language-"],
 pre[class*="language-"] {
-	color: #f8f8f2;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
-	font-family: Consolas, Monaco, 'Andale Mono', monospace;
+	color: black;
+	font-family: Menlo, Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 	direction: ltr;
 	text-align: left;
 	white-space: pre;
 	word-spacing: normal;
 	word-break: normal;
-	line-height: 1.5;
+	word-wrap: normal;
+	line-height: 1.7em;
 
 	-moz-tab-size: 4;
 	-o-tab-size: 4;
@@ -29,84 +29,115 @@ pre[class*="language-"] {
 
 /* Code blocks */
 pre[class*="language-"] {
-	padding: 1em;
+	position: relative;
 	margin: .5em 0;
-	overflow: auto;
-	/*border-radius: 0.3em;*/
+	border-left: 5px solid #358ccb;
+	background-color: #f0f0f0;
+	background-size: 3em 3em;
+	background-origin: content-box;
+	overflow: visible;
+	/*max-height: 30em;*/
+	padding: 0;
 }
 
-:not(pre) > code[class*="language-"],
-pre[class*="language-"] {
-	background: #272822;
+code[class*="language"] {
+	max-height: inherit;
+	height: 100%;
+	padding: 0 1em;
+	display: block;
+	overflow: auto;
 }
 
 /* Inline code */
 :not(pre) > code[class*="language-"] {
-	padding: .1em;
-	/*border-radius: .3em;*/
+	position: relative;
+	padding: .2em;
+	color: #505050;
+	display: inline;
+	white-space: normal;
+}
+
+pre[class*="language-"]:before,
+pre[class*="language-"]:after {
+	content: '';
+	z-index: -2;
+	display: block;
+	position: absolute;
+	bottom: 0.75em;
+	left: 0.18em;
+	width: 40%;
+	height: 20%;
+}
+
+:not(pre) > code[class*="language-"]:after,
+pre[class*="language-"]:after {
+	right: 0.75em;
+	left: auto;
 }
 
 .token.comment,
+.token.block-comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-	color: slategray;
+	color: rgba(0, 131, 18, 1);
 }
 
 .token.punctuation {
-	color: #f8f8f2;
-}
-
-.namespace {
-	opacity: .7;
+	color: #5F6364;
 }
 
 .token.property,
 .token.tag,
+.token.boolean,
+.token.number,
+.token.function-name,
 .token.constant,
 .token.symbol,
 .token.deleted {
-	color: #f92672;
-}
-
-.token.boolean,
-.token.number {
-	color: #ae81ff;
+	color: #c92c2c;
 }
 
 .token.selector,
 .token.attr-name,
 .token.string,
 .token.char,
+.token.function,
 .token.builtin,
 .token.inserted {
-	color: #a6e22e;
+	color: rgba(196, 26, 22, 1);
 }
 
 .token.operator,
 .token.entity,
 .token.url,
-.language-css .token.string,
-.style .token.string,
 .token.variable {
-	color: #f8f8f2;
+	color: rgba(63, 110, 116, 1);
+	background: rgba(255, 255, 255, 0.5);
 }
 
 .token.atrule,
-.token.attr-value {
-	color: #e6db74;
-}
-
-.token.keyword {
-	color: #66d9ef;
+.token.attr-value,
+.token.keyword,
+.token.class-name {
+	color: rgba(170, 51, 145, 1);
 }
 
 .token.regex,
 .token.important {
-	color: #fd971f;
+	color: #e90;
 }
 
-.token.important,
+.language-css .token.string,
+.style .token.string {
+	color: #a67f59;
+	background: rgba(255, 255, 255, 0.5);
+}
+
+.token.important {
+	font-weight: normal;
+}
+
 .token.bold {
 	font-weight: bold;
 }
@@ -116,4 +147,50 @@ pre[class*="language-"] {
 
 .token.entity {
 	cursor: help;
+}
+
+.namespace {
+	opacity: .7;
+}
+
+@media screen and (max-width: 767px) {
+	pre[class*="language-"]:before,
+	pre[class*="language-"]:after {
+		bottom: 14px;
+	}
+
+}
+
+/* Plugin styles */
+.token.tab:not(:empty):before,
+.token.cr:before,
+.token.lf:before {
+	color: #e0d7d1;
+}
+
+/* Plugin styles: Line Numbers */
+pre[class*="language-"].line-numbers {
+	padding-left: 0;
+}
+
+pre[class*="language-"].line-numbers code {
+	padding-left: 3.8em;
+}
+
+pre[class*="language-"].line-numbers .line-numbers-rows {
+	left: 0;
+}
+
+/* Plugin styles: Line Highlight */
+pre[class*="language-"][data-line] {
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 0;
+}
+pre[data-line] code {
+	position: relative;
+	padding-left: 4em;
+}
+pre .line-highlight {
+	margin-top: 0;
 }

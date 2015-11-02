@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>Flax Programming Language</title>
+
+	<!-- Bootstrap Core CSS -->
+	<link href="../css/bootstrap.css" rel="stylesheet">
+
+	<!-- Custom CSS -->
+	<link href="../css/style.css" rel="stylesheet">
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+	<link rel="stylesheet" href="../fonts/font-awesome-4.4.0/css/font-awesome.min.css">
+
+
+	<link rel="stylesheet" href="../css/prism.css" />
+	<script src="../js/prism.js"></script>
+
+
+	<!-- jQuery -->
+	<script src="../js/jquery.js"></script>
+	<script src="../js/init.js"></script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<a href="#menu-toggle" class="menu-toggle"><i class="fa fa-list"></i></a>
+
+		<div id="sidebar-wrapper"></div>
+
+		<!-- Page Content -->
+		<div id="page-content-wrapper">
+		<div class="container-fluid">
+		<div class="row">
+		<div class="col-lg-12" id="main-view">
+
+			<div class="col-lg-12 content-view" id="the-basics">
+			<h1 class="content-header">The Basics</h1>
+			<hr />
+
+			<p>
+			Flax provides a variety of different types, including <code>Int</code> for integers,
+			<code>Bool</code> for boolean values, <code>Float</code> for floating-point
+			numbers, and <code>String</code> for textual data. In addition to these familiar types, Flax also
+			employs the use of tuple types, which are essentially anonymous structs without named members, facilitating an easy way
+			to pass pieces of related data around.
+			</p>
+
+			<p>
+			Flax is a <i>type-safe</i> language, which means the language helps you to be clear about the types of values your code can
+			work with. If part of your code expects a <code>String</code>, type safety prevents you from passing it an
+			<code>Int</code> by mistake. Type safety helps you catch and fix errors as early as possible in the
+			development process.
+			</p>
+
+
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="constants-and-variables">Constants and Variables</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Constants and variables are a way to associate a value, for example <code>10</code> or <code>"John Doe"</code> with a name, for
+			instance <code>age</code> or <code>name</code>. Constants cannot be changed once they are assigned, while variables can be given
+			a new value later on in the program.
+			</p>
+
+
+			<h4 class="subcontent-header" id="declaring-cs-and-vs">Declaring Constants and Variables</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			As with any imperative language, constants and variables need to be declared before they are used. In Flax, variables are
+			declared with the <code>var</code> keyword, while constants can be declared either with
+			<code>val</code> or <code>let</code>.
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let maximumNumberOfLoginAttempts = 10
+var currentLoginAttempt = 0</code></pre>
+
+
+			<p>
+			This code can be read as:
+			</p>
+
+			<p>
+			"Declare a new constant called <code>maximumNumberOfLoginAttempts</code>, and give it a value of 10. Then,
+			declare a new variable called <code>currentLoginAttempt</code>, and give it an initial value of 0".
+			</p>
+
+			<p>
+			In this example, the maximum number of allowed login attempts is declared as a constant, because the maximum value never changes.
+			The current login attempt counter is declared as a variable, because this value must be incremented after each failed login attempt.
+			</p>
+
+			<aside class="note">
+				<p class="note-title" />
+				<p class="note-content">If a stored value in your code is not going to change, always declare it as a constant with the let
+				keyword. Use variables only for storing values that need to be able to change.
+				</p>
+			</aside>
+
+
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="type-annotations">Type Annotations</h3>
+			<h4 class="anchor-clicker"></h4><p>
+
+			You can provide a <i>type annotation</i> when you declare a constant or variable, to be clear about the kind of values the
+			constant or variable can store. Write a type annotation by placing a colon after the constant or variable name, followed by a space,
+			followed by the name of the type to use.
+			</p>
+
+			<p>
+			This example provides a type annotation for a variable called <code>welcomeMessage</code>, to indicate that the variable can store
+			<code>String</code> values:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+var welcomeMessage: String</code></pre>
+
+			<p>
+			The colon in the declaration means <i>"... of type ..."</i>, so the code above can be read as:
+			</p>
+
+			<p>
+			"Declare a variable called <code>welcomeMessage</code> that is of type <code>String</code>".
+			</p>
+
+			<p>
+			The phrase "of type <code>String</code>" means "can store any <code>String</code> value". Think of it as meaning
+			"the type of thing" (or "the kind of thing") that can be stored.
+			</p>
+
+			<p>
+			The welcomeMessage variable can now be set to any string value without error:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+welcomeMessage = "Hello"</code></pre>
+
+
+			<aside class="note">
+				<p class="note-title" />
+				<p class="note-content">
+				It is rare that you need to write type annotations in practice. If you provide an initial value for a constant or variable at the
+				point that it is defined, the compiler can almost always infer the type to be used for that constant or variable. In the
+				<code>welcomeMessage</code> example above, no initial value is provided, and so the type of the <code>welcomeMessage</code>
+				variable is specified with a type annotation rather than being inferred from an initial value.
+				</p>
+			</aside>
+
+
+
+
+
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="naming-cs-and-vs">Naming Variables and Constants</h3>
+			<h4 class="anchor-clicker"></h4><p>
+
+			Constant and variable names can contain almost any character, including Unicode characters:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let π = 3.14159
+let 你好 = "你好世界"
+let 🐶🐮 = "dogcow"</code></pre>
+
+			<p>
+			Constant and variable names cannot contain whitespace characters, mathematical symbols, arrows, private-use (or invalid) Unicode
+			code points, or line- and box-drawing characters. Nor can they begin with a number, although numbers may be included elsewhere within
+			the name.
+			</p>
+
+			<p>
+			Once you’ve declared a constant or variable of a certain type, you can’t redeclare it again with the same name, or change it to
+			store values of a different type. Nor can you change a constant into a variable or a variable into a constant.
+			</p>
+
+			<p>
+			You can change the value of an existing variable to another value of a compatible type. In this example, the value of
+			<code>friendlyWelcome</code> is changed from <code>"Hello!"</code> to <code>"Bonjour!"</code>:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+var friendlyWelcome = "Hello!"
+friendlyWelcome = "Bonjour!"
+// friendlyWelcome is now "Bonjour!"</code></pre>
+
+			<p>
+			Unlike a variable, the value of a constant cannot be changed once it is set. Attempting to do so is reported as an error when your
+			code is compiled:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let name = "John"
+name = "Joe"
+// compile-time error, name cannot be changed</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="comments">Comments</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Use comments to include non-executable text in your code, as a note or reminder to yourself. Comments are ignored by the compiler
+			when your code is compiled.
+			</p>
+
+			<p>
+			Comments in Flax are very similar to comments in C. Single-line comments begin with two forward-slashes (<code>//</code>):
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+// this is a comment</code></pre>
+
+			<p>
+			Multiline comments start with a forward-slash followed by an asterisk (<code>/*</code>) and end with an asterisk followed by a
+			forward-slash (<code>*/</code>):
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+/* this is also a comment,
+but written over multiple lines */</code></pre>
+
+
+			<p>
+			Unlike multiline comments in C, multiline comments in Flax can be nested inside other multiline comments. You write nested
+			comments by starting a multiline comment block and then starting a second multiline comment within the first block. The second block
+			is then closed, followed by the first block:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+/* this is the start of the first multiline comment
+/* this is the second, nested multiline comment */
+this is the end of the first multiline comment */</code></pre>
+
+			<p>
+			Nested multiline comments enable you to comment out large blocks of code quickly and easily, even if the code already contains
+			multiline comments.
+			</p>
+
+			<aside class="note">
+				<p class="note-title" />
+				<p class="note-content">
+				The nested-comment example only looks screwed-up because prism.js doesn't handle it properly. Rest assured it works properly
+				in the compiler.
+				</p>
+			</aside>
+
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="semicolons">Semicolons</h3>
+			<h3 class="anchor-clicker"></h3><p>
+			Flax does not require you to write a semicolon (<code>;</code>) after each statement in your code, although you
+			can do so if you wish. However, semicolons are <i>required</i> if you want to write multiple separate statements on a single line:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let cat = "🐱"; printf("%s", cat)
+// prints "🐱"</code></pre>
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="integers">Integers</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			<i>Integers</i> are whole numbers with no fractional component, such as <code>42</code> and <code>-23</code>. Integers are either
+			signed (positive, zero, or negative) or unsigned (positive or zero).
+			</p>
+
+			<p>
+			Flax provides signed and unsigned integers in 8, 16, 32, and 64 bit forms. These integers follow a naming convention similar to C,
+			in that an 8-bit unsigned integer is of type <code>Uint8</code>, and a 32-bit signed integer is of type <code>Int32</code>.
+			</p>
+
+
+			<h4 class="subcontent-header" id="integer-bounds">Integer Bounds</h4>
+			<div class="anchor-clicker"></div><p>
+
+			You can access the minimum and maximum values of each integer type with its <code>min</code> and <code>max</code> properties:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let minValue = Uint8.min  // minValue is equal to 0, and is of type Uint8
+let maxValue = Uint8.max  // maxValue is equal to 255, and is of type Uint8</code></pre>
+
+
+			<p>
+			Naturally, the values of these properties are of the appropriate-sized number type (such as <code>Uint8</code> in the example above)
+			and can therefore be used in expressions alongside other values of the same type.
+			</p>
+
+			<p>
+			Finally, the <code>Int</code> and <code>Uint</code> are convenience types that are available. These should be used instead of
+			integer types with explicit sizes, when possible. Exceptions could include explicitly conveying the size of the type for some
+			external interface, or when reading data from a foreign source.
+			</p>
+
+			<ul>
+				<li>
+				On 32-bit platforms, <code>Int</code> and <code>Uint</code> are the same size as
+				<code>Int32</code> and <code>Uint32</code> respectively.
+				</li>
+
+				<li>
+				On 64-bit platforms, <code>Int</code> and <code>Uint</code> are the same size as
+				<code>Int64</code> and <code>Uint64</code> respectively.
+				</li>
+			</ul>
+
+			<p>
+			A summary of the minimum and maximum values for each signed integer type is presented below:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let i8Min = Int8.min		// -128
+let i8Max = Int8.max		// +127
+
+let i16Min = Int16.min		// -32,768
+let i16Max = Int16.max		// +32,767
+
+let i32Min = Int32.min		// −2,147,483,648
+let i32Max = Int32.max		// +2,147,483,647
+
+let i64Min = Int64.min		// −9,223,372,036,854,775,808
+let i64Max = Int64.max		// +9,223,372,036,854,775,807</code></pre>
+
+
+			<p>
+			Similarly, the bounds of the unsigned integer types are below:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let u8Min = Uint8.min		// 0
+let u8Max = Uint8.max		// 255
+
+let u16Min = Uint16.min		// 0
+let u16Max = Uint16.max		// 65,535
+
+let u32Min = Uint32.min		// 0
+let u32Max = Uint32.max		// 4,294,967,295
+
+let u64Min = Uint64.min		// 0
+let u64Max = Uint64.max		// 18,446,744,073,709,551,615</code></pre>
+
+
+			<aside class="note">
+				<p class="note-title" />
+				<p class="note-content">
+				For general code, use <code>Uint</code> only when you specifically need an unsigned integer type with the same size as the
+				platform’s native word size. If this is not the case, Int is preferred, even when the values to be stored are known to be
+				non-negative. A consistent use of Int for integer values aids code interoperability, avoids the need to convert between different
+				number types, and matches default integer type inference for constants.
+				</p>
+			</aside>
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="floating-point-numbers">Floating-Point Numbers</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Floating-point numbers are numbers with a fractional component, such as <code>0.1</code>, <code>-273.15</code>, and
+			<code>3.1415926535897932384626</code>.
+			</p>
+
+			<p>
+			Floating-point types can represent a much wider range of values than integer types, and can store numbers that are much larger or
+			smaller than can be stored in an <code>Int</code>. Two floating-point number types are available:
+			</p>
+
+			<ul>
+				<li><code>Float64</code>, or <code>Double</code>, represents a 64-bit floating-point number.</li>
+				<li><code>Float32</code>, or <code>Float</code>, represents a 32-bit floating-point number.</li>
+			</ul>
+
+			<p>
+			<code>Float32</code> and <code>Float64</code> are interchangable with <code>Float</code> and <code>Double</code> respectively.
+			</p>
+
+			<p>
+			Note that floating-point numbers are always signed, and do not have an unsigned version.
+			</p>
+
+			<aside class="note">
+				<p class="note-title" />
+				<p class="note-content">
+				<code>Float64</code> has a precision of at least 15 decimal digits, whereas the precision of <code>Float32</code> can be as
+				little as 6 decimal digits. The appropriate floating-point type to use depends on the nature and range of values you need to work
+				with in your code. In situations where either type would be appropriate, <code>Float64</code> is preferred.
+				</p>
+			</aside>
+
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="types-and-inference">Types and Type Inference</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+			</div>
+
+		</div>
+		</div>
+		</div>
+		</div>
+
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="../js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
