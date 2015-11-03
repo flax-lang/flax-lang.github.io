@@ -210,7 +210,7 @@ p.note-content
 
 div.content-view
 {
-	position: absolute;
+	/*position: absolute;*/
 }
 
 
@@ -272,6 +272,11 @@ h4.anchor-clicker:after { content: "§"; }
 
 
 
+/* list stuff */
+ul.point-list > li
+{
+	margin-bottom: 10px;
+}
 
 
 
@@ -295,6 +300,37 @@ div.footer-next
 	float: right;
 	padding-right: 16px;
 }
+
+/* images */
+div.diagram-container
+{
+	text-align: center;
+	margin: 40px;
+}
+
+img.image-diagram
+{
+	display: inline-block;
+	text-align: center;
+}
+
+img#remainder-int.image-diagram
+{
+	width: 337px;
+	height: 66px;
+}
+
+img#remainder-float.image-diagram
+{
+	width: 301px;
+	height: 66px;
+}
+
+
+
+
+
+
 
 
 

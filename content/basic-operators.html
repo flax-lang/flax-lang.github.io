@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>Flax Programming Language</title>
+
+	<!-- Bootstrap Core CSS -->
+	<link href="../css/bootstrap.css" rel="stylesheet">
+
+	<!-- Custom CSS -->
+	<link href="../css/style.css" rel="stylesheet">
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+	<link rel="stylesheet" href="../fonts/font-awesome-4.4.0/css/font-awesome.min.css">
+
+
+	<link rel="stylesheet" href="../css/prism.css" />
+	<script src="../js/prism.js"></script>
+
+
+	<!-- jQuery -->
+	<script src="../js/jquery.js"></script>
+	<script src="../js/init.js"></script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<a href="#menu-toggle" class="menu-toggle"><i class="fa fa-list"></i></a>
+
+		<div id="sidebar-wrapper"></div>
+
+		<!-- Page Content -->
+		<div id="page-content-wrapper">
+		<div class="container-fluid">
+		<div class="row">
+		<div class="col-lg-12" id="main-view">
+
+			<div class="col-lg-12 content-view" id="basic-operators">
+			<h1 class="content-header">Basic Operators</h1>
+			<hr />
+
+
+			<p>
+			An operator is a special symbol or phrase that you use to check, change, or combine values. For example, the addition operator
+			(<code>+</code>) adds two numbers together (as in <code>let i = 1 + 2</code>). More complex examples include the logical AND
+			operator <code>&amp;&amp;</code> (as in <code>if enteredDoorCode &amp;&amp; passedRetinaScan)</code> and the compound assignment
+			operator <code>+=</code>, which is a shortcut to increase the value of <code>i</code>.
+			</p>
+
+			<p>
+			Flax supports most standard C operators and improves several capabilities to eliminate common coding errors. The assignment
+			operator (<code>=</code>) does not return a value, to prevent it from being mistakenly used when the equal to operator
+			(<code>==</code>) is intended. Arithmetic operators (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>,
+			<code>%</code> and so forth) can be configured to check for overflow or underflow errors, when performance is not critical.
+			</p>
+
+
+			<aside class="note">
+				<p class="note-title">Future</p>
+				<p class="note-content">
+				Checking of overflow with arithmetic operators are currently not implemented.
+				</p>
+			</aside>
+
+
+			<p>
+			Additionally, unlike C, Flax lets you perform remainder (<code>%</code>) calculations on floating-point numbers.
+			</p>
+
+			<p>
+			This chapter describes the common operators in Flax. Advanced Operators covers Flax's advanced operators, and describes how to
+			define your own custom operators and implement the standard operators for your own custom types.
+			</p>
+
+
+
+
+			<h3 class="subcontent-header" id="terminology">Terminology</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Operators are unary, binary, or ternary:</p>
+
+			<ul class="point-list">
+				<li>
+					<i>Unary</i> operators operate on a single target (such as <code>-a</code>). Unary prefix operators appear immediately before
+					their target (such as <code>!b</code>), and unary postfix operators appear immediately after their target
+					(such as <code>i++</code>).
+				</li>
+
+				<li>
+					<i>Binary</i> operators operate on two targets (such as <code>2 + 3</code>) and are infix because they appear in between
+					their two targets.
+				</li>
+
+				<li>
+					<i>Ternary</i> operators operate on three targets. Like C, Flax has only one ternary operator, the ternary conditional
+					operator (<code>a ? b : c</code>).
+				</li>
+			</ul>
+
+			<p>
+			The values that operators affect are operands. In the expression <code>1 + 2</code>, the <code>+</code> symbol is a binary
+			operator and its two operands are the values <code>1</code> and <code>2</code>.
+			</p>
+
+			<aside class="note">
+				<p class="note-title">Future</p>
+				<p class="note-content">
+				Flax currently has neither the increment operators (<code>i++</code> and <code>++i</code>) nor the ternary conditional
+				operator (<code>a ? b : c</code>). Both will be implemented eventually.
+				</p>
+			</aside>
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="assignment-operator">Assignment Operator</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			The assignment operator (<code>a = b</code>) initializes or updates the value of <code>a</code> with the value of <code>b</code>:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let b = 10
+var a = 5
+a = b
+// a is now equal to 10</code></pre>
+
+			<p>
+			If the right side of the assignment is a tuple with multiple values, its elements can be decomposed into multiple constants or
+			variables at once:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let (x, y) = (1, 2)
+// x is equal to 1, and y is equal to 2</code></pre>
+
+			<p>
+			This is known as <i>tuple decomposition</i>, and is a highly powerful tool.
+			</p>
+
+			<aside class="note">
+				<p class="note-title">Future</p>
+				<p class="note-content">
+				Tuple decomposition is currently not available.
+				</p>
+			</aside>
+
+
+			<p>
+			Unlike the assignment operator in languages such as C and Java, the assignment operator in Flax does not return a value. Hence, the
+			following statements are invaild:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+if x = y {
+    // this is not valid, because x = y does not return a value
+}
+
+var b = 30
+var c = 10
+
+var k = b = c	// this is not valid.</code></pre>
+
+			<p>
+			This feature prevents the assignment operator (<code>=</code>) from being used by accident when the equal to operator
+			(<code>==</code>) is actually intended.
+			</p>
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="arithmetic-operators">Arithmetic Operators</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Flax supports the four basic arithmetic operators on all builtin numeric types:
+			</p>
+
+			<ul class="point-list">
+				<li>(<code>+</code>)&nbsp;&nbsp; Addition</li>
+				<li>(<code>-</code>)&nbsp;&nbsp; Subtraction</li>
+				<li>(<code>*</code>)&nbsp;&nbsp; Multiplication</li>
+				<li>(<code>/</code>)&nbsp;&nbsp; Division</li>
+			</ul>
+
+			<p>
+			Additionally, the unicode characters <code>×</code> and <code>÷</code> can be used in place of multiplcation (<code>*</code>)
+			and division (<code>/</code>) respectively.
+			</p>
+
+			<p>
+			The addition operator is also supported for String concatenation:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let str = "Hello, " + "World!"
+printf("%s\n", str)
+// prints "Hello, World!"</code></pre>
+
+
+
+
+			<h4 class="subcontent-header" id="remainder-operator">Remainder Operator</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			The remainder operator (<code>a % b</code>) works out how many multiples of <code>b</code> will fit inside <code>a</code> and
+			returns the value that is left over (known as the remainder).
+			</p>
+
+
+			<aside class="note">
+				<p class="note-title">Note</p>
+				<p class="note-content">
+				The remainder operator (<code>%</code>) is also known as a modulo operator in other languages. However, its behavior in Flax
+				for negative numbers means that it is, strictly speaking, a remainder rather than a modulo operation.
+				</p>
+			</aside>
+
+
+			<p>
+			Here’s how the remainder operator works. To calculate <code>9 % 4</code>, you first work out how many <code>4</code>s will fit
+			inside <code>9</code>:
+			</p>
+
+
+			<div class="diagram-container"><img id="remainder-int" class="image-diagram" src="../images/remainderInteger.png" /></div>
+
+
+			<p>
+			You can fit two <code>4</code>s inside <code>9</code>, and the remainder is <code>1</code> (shown in orange).
+			</p>
+
+			<p>
+			This would be written in Flax as:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let m = 9 % 4	// equals 1</code></pre>
+
+
+			<p>
+			To determine the answer for <code>a % b</code>, the <code>%</code> operator calculates the following equation and returns
+			<code>remainder</code> as its output:
+			</p>
+
+			<p>
+			<code>a = (b x some multiplier) + remainder</code>
+			</p>
+
+			<p>
+			where some <code>multiplier</code> is the largest number of multiples of <code>b</code> that will fit inside <code>a</code>.
+			</p>
+
+			<p>
+			Inserting <code>9</code> and <code>4</code> into this equation yields:
+			</p>
+
+			<p>
+			<code>9 = (4 x 2) + 1</code>
+			</p>
+
+			<p>
+			The same method is applied when calculating the remainder for a negative value of <code>a</code>:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let m = -9 % 4	// equals -1</code></pre>
+
+			<p>
+			Inserting <code>-9</code> and <code>4</code> into the equation yields:
+			</p>
+
+			<p>
+			<code>-9 = (4 x -2) + -1</code>
+			</p>
+
+			<p>
+			giving a remainder value of <code>-1</code>.
+			</p>
+
+			<p>
+			The sign of <code>b</code> is ignored for negative values of <code>b</code>. This means that <code>a % b</code> and
+			<code>a % -b</code> always give the same answer.
+			</p>
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="float-remainder-operator">Floating-Point Remainder Operator</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			Unlike the remainder operator in C, Flax's remainder operator can also operate on floating-point numbers:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let m = 8 % 2.5	// equals 0.5</code></pre>
+
+			<p>
+			In this example, <code>8</code> divided by <code>2.5</code> equals <code>3</code>, with a remainder of <code>0.5</code>, so
+			the remainder operator returns a <code>Double</code> value of <code>0.5</code>.
+			</p>
+
+			<div class="diagram-container"><img id="remainder-float" class="image-diagram" src="../images/remainderFloat.png" /></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="unary-minus-operator">Unary Minus Operator</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			The sign of a numeric value can be toggled using a prefixed <code>-</code>, known as the <i>unary minus operator</i>:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let three = 3
+let minusThree = -three			// minusThree equals -3
+let plusThree = -minusThree		// plusThree equals 3, or "minus minus three"</code></pre>
+
+			<p>
+			The unary minus operator (<code>-</code>) is prepended directly before the value it operates on, without any white space.
+			</p>
+
+
+
+
+
+			<h4 class="subcontent-header" id="unary-plus-operator">Unary Plus Operator</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			The unary plus operator (<code>+</code>) simply returns the value it operates on, without any change:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let minusSix = -6
+let alsoMinusSix = +minusSix  // alsoMinusSix equals -6</code></pre>
+
+			<p>
+			Although the unary plus operator doesn’t actually do anything, you can use it to provide symmetry in your code for positive numbers
+			when also using the unary minus operator for negative numbers.
+			</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="compound-assignment-operators">Compound Assignment Operators</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Like C, Flax provides compound assignment operators that combine assignment (<code>=</code>) with another operation.
+			One example is the addition assignment operator (<code>+=</code>):
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+var a = 1
+a += 2
+// a is now equal to 3</code></pre>
+
+			<p>
+			The expression <code>a += 2</code> is shorthand for <code>a = a + 2</code>. Effectively, the addition and the assignment are
+			combined into one operator that performs both tasks at the same time.
+			</p>
+
+			<aside class="note">
+				<p class="note-title">Note</p>
+				<p class="note-content">
+				Unlike in C, the compound assignment operators do not return a value. This is similar in behaviour to the assignment
+				operator. Thus, code like <code>a = b += 4</code> will not work.
+				</p>
+			</aside>
+
+			<p>
+			Here is a list of the supported compound assignment operators:
+			</p>
+
+			<ul class="point-list">
+				<li>(<code>+=</code>)&nbsp;&nbsp; Plus equals</li>
+				<li>(<code>-=</code>)&nbsp;&nbsp; Minus equals</li>
+				<li>(<code>*=</code>)&nbsp;&nbsp; Times equals</li>
+				<li>(<code>/=</code>)&nbsp;&nbsp; Divide equals</li>
+				<li>(<code>%=</code>)&nbsp;&nbsp; Mod equals</li>
+				<li>(<code>&amp;=</code>)&nbsp;&nbsp; Binary And equals</li>
+				<li>(<code>|=</code>)&nbsp;&nbsp; Binary Or equals</li>
+				<li>(<code>^=</code>)&nbsp;&nbsp; Binary Xor equals</li>
+				<li>(<code>&lt;&lt;=</code>)&nbsp;&nbsp; Shift left equals</li>
+				<li>(<code>&gt;&gt;=</code>)&nbsp;&nbsp; Shift right equals</li>
+			</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="inc-and-dec-operators">Increment and Decrement Operators</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Like C, Flax provides an increment operator (<code>++</code>) and a decrement operator (<code>--</code>) as a shortcut to increase
+			or decrease the value of a numeric variable by <code>1</code>. You can use these operators with variables of any integer or
+			floating-point type.
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+var i = 0
+++i		// i now equals 1</code></pre>
+
+			<p>
+			Each time you call <code>++i</code>, the value of <code>i</code> is increased by <code>1</code>. Essentially, <code>++i</code> is
+			shorthand for saying <code>i += 1</code>. Likewise, <code>--i</code> can be used as shorthand for <code>i -= 1</code>.
+			</p>
+
+
+			<p>
+			The <code>++</code> and <code>--</code> symbols can be used as prefix operators or as postfix operators. <code>++i</code> and
+			<code>i++</code> are both valid ways to increase the value of <code>i</code> by <code>1</code>. Similarly, <code>--i</code> and
+			<code>i--</code> are both valid ways to decrease the value of <code>i</code> by <code>1</code>.
+			</p>
+
+
+			<p>
+			Naturally, these operators modify <code>i</code> and also return a value. If you only want to increment or decrement the value stored
+			in <code>i</code>, you can ignore the returned value. However, if you <i>do</i> use the returned value, it will be different based
+			on whether you used the prefix or postfix version of the operator, according to the following rules:
+			</p>
+
+			<ul class="point-list">
+				<li>
+				If the operator is written <i>before</i> the variable, it modifies the variable <i>before</i> returning its value.
+				</li>
+				<li>
+				If the operator is written <i>after</i> the variable, it modifies the variable <i>after</i> returning its value.
+				</li>
+			</ul>
+
+			<p>
+			For example:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+var a = 0
+let b = ++a
+// a and b are now both equal to 1
+let c = a++
+// a is now equal to 2, but c has been set to the pre-increment value of 1</code></pre>
+
+
+			<p>
+			In the example above, <code>let b = ++a</code> increments a before returning its value. This is why both a and b are equal to the
+			new value of <code>1</code>.
+			</p>
+
+			<p>
+			However, <code>let c = a++</code> increments a after returning its value. This means that <code>c</code> gets the old value of
+			<code>1</code>, and a is then updated to equal <code>2</code>.
+			</p>
+
+			<p>
+			Unless you need the specific behavior of <code>i++</code>, it is recommended that you use <code>++i</code> and <code>--i</code>
+			in all cases, because they have the typical expected behavior of modifying i and returning the result.
+			</p>
+
+
+			<aside class="note">
+				<p class="note-title">Future</p>
+				<p class="note-content">
+				The entire chapter above is currently irrelevant, since Flax <i>currently</i> does not support the increment and
+				decrement operators.
+				</p>
+			</aside>
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="comparison-operators">Comparison Operators</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Flax supports all of the standard C comparison operators:
+			</p>
+
+			<ul class="point-list">
+				<li>(<code>a &lt; b</code>)&nbsp;&nbsp; Less than
+				<li>(<code>a &gt; b</code>)&nbsp;&nbsp; Greater than
+				<li>(<code>a == b</code>)&nbsp;&nbsp; Equal to
+				<li>(<code>a != b</code>)&nbsp;&nbsp; Not equal to
+				<li>(<code>a &lt;= b</code>)&nbsp;&nbsp; Less than or equal to
+				<li>(<code>a &gt;= b</code>)&nbsp;&nbsp; Greater than or equal to
+			</ul>
+
+
+			<p>
+			Each of the comparison operators returns a <code>Bool</code> value to indicate whether or not the statement is true:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+1 &lt; 2		// true, because 1 is less than 2
+2 &gt; 1		// true, because 2 is greater than 1
+1 == 1		// true, because 1 is equal to 1
+2 != 1		// true, because 2 is not equal to 1
+2 &lt;= 1		// false, because 2 is not less than or equal to 1
+1 &gt;= 1		// true, because 1 is greater than or equal to 1</code></pre>
+
+
+			<p>
+			Comparison operators are often used in conditional statements, such as the <code>if</code> statement:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let name = "world"
+if name == "world" {
+    print("hello, world")
+} else {
+    print("I'm sorry \(name), but I don't recognize you")
+}
+// prints "hello, world", because name is indeed equal to "world"</code></pre>
+
+			<p>
+			For more on the <code>if</code> statement, see <a href="control-flow.html">Control Flow</a>.
+			</p>
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="ternary-conditional-operator">Ternary Conditional Operator</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			The ternary conditional operator is a special operator with three parts, which takes the form
+			<code>question ? answer1 : answer2</code>. It is a shortcut for evaluating one of two expressions based on whether question is
+			<code>true</code> or <code>false</code>. If question is <code>true</code>, it evaluates <code>answer1</code> and returns its value;
+			otherwise, it evaluates <code>answer2</code> and returns its value.
+			</p>
+
+			<p>
+			The ternary conditional operator is shorthand for the code below:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+if question
+{
+    answer1
+}
+else
+{
+    answer2
+}</code></pre>
+
+			<p>
+			Here’s an example, which calculates the height for a table row. The row height should be 50 points taller than the content height if
+			the row has a header, and 20 points taller if the row doesn’t have a header:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let contentHeight = 40
+let hasHeader = true
+let rowHeight = contentHeight + (hasHeader ? 50 : 20)
+// rowHeight is equal to 90</code></pre>
+
+			<p>
+			The preceding example is shorthand for the code below:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let contentHeight = 40
+let hasHeader = true
+var rowHeight = contentHeight
+
+if hasHeader
+{
+	rowHeight = rowHeight + 50
+}
+else
+{
+	rowHeight = rowHeight + 20
+}
+// rowHeight is equal to 90</code></pre>
+
+			<p>
+			The first example’s use of the ternary conditional operator means that <code>rowHeight</code> can be set to the correct value on a
+			single line of code. This is more concise than the second example, and removes the need for <code>rowHeight</code> to be a variable,
+			because its value does not need to be modified within an if statement.
+			</p>
+
+			<p>
+			The ternary conditional operator provides an efficient shorthand for deciding which of two expressions to consider. Use the ternary
+			conditional operator with care, however. Its conciseness can lead to hard-to-read code if overused. Avoid combining multiple
+			instances of the ternary conditional operator into one compound statement.
+			</p>
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="logical-operators">Logical Operators</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Logical operators modify or combine the Boolean logic values true and false. Swift supports the three standard logical operators
+			found in C-based languages:
+			</p>
+
+			<ul>
+				<li>(<code>!a</code>)&nbsp;&nbsp; Logical NOT</li>
+				<li>(<code>a || b</code>)&nbsp;&nbsp; Logical AND</li>
+				<li>(<code>a &amp;&amp; b</code>)&nbsp;&nbsp; Logical OR</li>
+			</ul>
+
+
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="logical-not-operator">Logical NOT Operator</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			The logical NOT operator (<code>!a</code>) inverts a Boolean value so that <code>true</code> becomes <code>false</code>,
+			and <code>false</code> becomes <code>true</code>.
+			</p>
+
+			<p>
+			The logical NOT operator is a prefix operator, and appears immediately before the value it operates on, without any white space. It
+			can be read as "not a", as seen in the following example:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let allowedEntry = false
+if !allowedEntry
+{
+	print("ACCESS DENIED")
+}
+// prints "ACCESS DENIED"</code></pre>
+
+			<p>
+			The phrase if <code>!allowedEntry</code> can be read as "if not allowed entry". The subsequent line is only executed if "not allowed
+			entry" is <code>true</code>; that is, if <code>allowedEntry</code> is <code>false</code>.
+			</p>
+
+			<p>
+			As in this example, careful choice of Boolean constant and variable names can help to keep code readable and concise, while avoiding
+			double negatives or confusing logic statements.
+			</p>
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="logical-and-operator">Logical AND Operator</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			The logical AND operator (<code>a &amp;&amp; b</code>) creates logical expressions where both values must be <code>true</code>
+			for the overall expression to also be <code>true</code>.
+			</p>
+
+			<p>
+			If either value is <code>false</code>, the overall expression will also be <code>false</code>. In fact, if the first value is
+			<code>false</code>, the second value won’t even be evaluated, because it can’t possibly make the overall expression equate to
+			<code>true</code>. This is known as short-circuit evaluation.
+			</p>
+
+			<p>
+			This example considers two <code>Bool</code> values and only allows access if both values are <code>true</code>:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let enteredDoorCode = true
+let passedRetinaScan = false
+
+if enteredDoorCode &amp;&amp; passedRetinaScan
+{
+	print("Welcome!")
+}
+else
+{
+	print("ACCESS DENIED")
+}
+// prints "ACCESS DENIED"</code></pre>
+
+
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="logical-or-operator">Logical OR Operator</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			The logical OR operator (<code>a || b</code>) is an infix operator made from two adjacent pipe characters. You use it to create
+			logical expressions in which only one of the two values has to be <code>true</code> for the overall expression to be
+			<code>true</code>.
+			</p>
+
+			<p>
+			Like the Logical AND operator above, the Logical OR operator uses short-circuit evaluation to consider its expressions. If the left
+			side of a Logical OR expression is <code>true</code>, the right side is not evaluated, because it cannot change the outcome of the
+			overall expression.
+			</p>
+
+			<p>
+			In the example below, the first <code>Bool</code> value (<code>hasDoorKey</code>) is <code>false</code>, but the second value
+			(<code>knowsOverridePassword</code>) is true. Because one value is <code>true</code>, the overall expression also evaluates to
+			<code>true</code>, and access is allowed:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let hasDoorKey = false
+let knowsOverridePassword = true
+
+if hasDoorKey || knowsOverridePassword
+{
+	print("Welcome!")
+}
+else
+{
+	print("ACCESS DENIED")
+}
+// prints "Welcome!"</code></pre>
+
+
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="combining-logical-operators">Combining Logical Operators</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			You can combine multiple logical operators to create longer compound expressions:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+if enteredDoorCode &amp;&amp; passedRetinaScan || hasDoorKey || knowsOverridePassword
+{
+	print("Welcome!")
+}
+else
+{
+	print("ACCESS DENIED")
+}
+// prints "Welcome!"</code></pre>
+
+			<p>
+			This example uses multiple <code>&amp;&amp;</code> and <code>||</code> operators to create a longer compound expression. However,
+			the <code>&amp;&amp;</code> and <code>||</code> operators still operate on only two values, so this is actually three smaller
+			expressions chained together. The example can be read as:
+			</p>
+
+			<p>
+			If we’ve entered the correct door code <i>and</i> passed the retina scan, <i>or</i> if we have a valid door key, <i>or</i> if we know
+			the emergency override password, then allow access.
+			</p>
+
+			<p>
+			Based on the values of <code>enteredDoorCode</code>, <code>passedRetinaScan</code>, and <code>hasDoorKey</code>, the first two
+			subexpressions are <code>false</code>. However, the emergency override password is known, so the overall compound expression still
+			evaluates to <code>true</code>.
+			</p>
+
+
+
+			<aside class="note">
+				<p class="note-title">Note</p>
+				<p class="note-content">
+				The <code>&amp;&amp;</code> and <code>||</code> logical operators are left-associative, , meaning that compound expressions with
+				multiple logical operators evaluate the leftmost subexpression first. Additionally, the Logical AND operator
+				(<code>&amp;&amp;</code>) has a higher precedence than the Logical OR operator <code>||</code>, so the example above can be
+				rewritten as <code>(enteredDoorCode &amp;&amp; passedRetinaScan) || hasDoorKey || knowsOverridePassword</code>
+				</p>
+			</aside>
+
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="explicit-parentheses">Explicit Parentheses</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			It is sometimes useful to include parentheses when they are not strictly needed, to make the intention of a complex expression easier
+			to read. In the door access example above, it is useful to add parentheses around the first part of the compound expression to make
+			its intent explicit:
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+if (enteredDoorCode &amp;&amp; passedRetinaScan) || hasDoorKey || knowsOverridePassword {
+	print("Welcome!")
+}
+else
+{
+	print("ACCESS DENIED")
+}
+// prints "Welcome!"</code></pre>
+
+			<p>
+			The parentheses make it clear that the first two values are considered as part of a separate possible state in the overall logic. The
+			output of the compound expression doesn’t change, but the overall intention is clearer to the reader. Readability is always preferred
+			over brevity; use parentheses where they help to make your intentions clear.
+			</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<div class="next-prev-footer">
+				<div class="footer-prev"><a href="the-basics.html"><i class="fa fa-caret-left"></i> The Basics</a></div>
+				<div class="footer-next"><a href="strings.html">Strings <i class="fa fa-caret-right"></i></a></div>
+			</div>
+
+
+			</div>
+
+
+
+		</div>
+		</div>
+		</div>
+		</div>
+
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="../js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
