@@ -32,6 +32,7 @@
 
 	<!-- jQuery -->
 	<script src="../js/jquery.js"></script>
+	<script src="../js/jquery.easing.min.js"></script>
 	<script src="../js/init.js"></script>
 </head>
 
@@ -651,7 +652,7 @@ else
 			<h3 class="subcontent-header" id="typealiases">Type Aliases</h3>
 			<h3 class="anchor-clicker"></h3><p>
 
-			Type aliases define an alternative name for an existing type. type aliases are defined with the typealias keyword.
+			Type aliases define an alternative name for an existing type. Type aliases are defined with the typealias keyword.
 			</p>
 
 			<p>
@@ -660,7 +661,7 @@ else
 			</p>
 
 <pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
-typealias AudioSample = UInt16</code></pre>
+typealias AudioSample = Uint16</code></pre>
 
 
 			<p>
@@ -674,8 +675,8 @@ var maxAmplitudeFound = AudioSample.min
 
 			<p>
 			Here, <code>AudioSample</code> is defined as an alias for <code>Uint16</code>. Because it is an alias, referencing
-			<code>AudioSample.min</code> actually references Uint16.min, which provides an initial value of 0 for the
-			<code>maxAmplitudeFound</code> variable.
+			<code>AudioSample.min</code> actually references <code>Uint16.min</code>, which provides an initial value of <code>0</code>
+			for the <code>maxAmplitudeFound</code> variable.
 			</p>
 
 
