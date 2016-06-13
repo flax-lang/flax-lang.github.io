@@ -53,7 +53,104 @@
 			<hr />
 
 			<p>
-			Nothing here yet.
+				In Flax, a string is a simply a series of characters, for example <code>"Foo"</code>, <code>"Поссия"</code>, and
+				<code>"🐰🐼"</code> are all strings. Programmatically, they are represented by the <code>String</code> type, which
+				is a part of the <code>Foundation</code> library.
+			</p>
+
+			<p>
+				Flax Strings are UTF-8 aware, and is able to distinguish between the number of <i>characters</i> versus the number of
+				<i>bytes</i>. The subunit of <code>String</code>, the <code>Character</code> class, is basically a minified string, holding
+				zero or more bytes, defining a UTF-8 codepoint.
+
+				Despite this, Flax Strings still allow arbitrary indexing via the subscript operator, although the operation happens i
+				<code>O(n)</code> time due to the nature of UTF-8.
+			</p>
+
+
+			<p>
+				As with the rest of Flax, the <code>String</code> type is designed to interoperate as seamlessly as possible with C;
+				<code>String</code>s can be transparently converted to <code>Int8*</code>, which is equivalent to <code>const char*</code> in C.
+				This is simply an access on the first member of the struct, so care must be taken passing it to mutating functions.
+			</p>
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="basic-strings">Basic Strings</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			<h4 class="subcontent-header" id="string-literals">String Literals</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+
+			<p>
+				The most straightforward way to use strings in Flax is through a <i>string literal</i>, which is simply a series of characters
+				enclosed in double quotes. String literals can contain Unicode characters, but the source file should be saved as UTF-8 to
+				allow compatibility.
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+"This is a string."
+</code></pre>
+
+
+			</p>
+
+			<p>
+				String literals can be assigned to variables, passed to functions, or otherwise used like a normal expression.
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+var str = "This is a string."
+str = "You've changed."			// this is legal
+</code></pre>
+
+				However, they are immutable, so they cannot be the target of an assignment.
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+"haha no." = "lol what"			// error
+</code></pre>
+
+			</p>
+
+
+
+			<h4 class="subcontent-header" id="mutability">Mutability</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			<p>
+				The string is a regular type like anything else, so the mutability of a <code>String</code> variable depends on whether
+				it was defined with <code>let/val</code> or <code>var</code>.
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let str = "Modify me!"
+str += "another!"			// error
+</code></pre>
+			</p>
+
+
+
+
+
+			<h4 class="subcontent-header" id="value-behaviour">Value Behaviour</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			<p>
+				Flax strings are <i>value-types</i>, meaning that expressions taking a string are given a <i>copy</i> of the original, such
+				that modifying the new string has no effect on the original string.
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+var string1 = "String One"
+var string2 = string1		// the contents of string1 are copied
+</code></pre>
+
+				The exception is where both the recipient and source of the string are immutable, in which case no copy is made, since
+				it is unnecessary.
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let string1 = "String One"
+let string2 = string1		// no copy
+</code></pre>
 			</p>
 
 
