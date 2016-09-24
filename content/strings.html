@@ -80,13 +80,11 @@
 
 
 			<h3 class="subcontent-header" id="basic-strings">Basic Strings</h3>
-			<h3 class="anchor-clicker"></h3><p>
+			<h3 class="anchor-clicker"></h3>
 
 			<h4 class="subcontent-header" id="string-literals">String Literals</h4>
 			<h4 class="anchor-clicker"></h4><p>
 
-
-			<p>
 				The most straightforward way to use strings in Flax is through a <i>string literal</i>, which is simply a series of characters
 				enclosed in double quotes. String literals can contain Unicode characters, but the source file should be saved as UTF-8 to
 				allow compatibility.
@@ -94,7 +92,6 @@
 <pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
 "This is a string."
 </code></pre>
-
 
 			</p>
 
@@ -119,7 +116,6 @@ str = "You've changed."			// this is legal
 			<h4 class="subcontent-header" id="mutability">Mutability</h4>
 			<h4 class="anchor-clicker"></h4><p>
 
-			<p>
 				The string is a regular type like anything else, so the mutability of a <code>String</code> variable depends on whether
 				it was defined with <code>let/val</code> or <code>var</code>.
 
@@ -136,13 +132,16 @@ str += "another!"			// error
 			<h4 class="subcontent-header" id="value-behaviour">Value Behaviour</h4>
 			<h4 class="anchor-clicker"></h4><p>
 
-			<p>
 				Flax strings are <i>value-types</i>, meaning that expressions taking a string are given a <i>copy</i> of the original, such
 				that modifying the new string has no effect on the original string.
 
 <pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
 var string1 = "String One"
 var string2 = string1		// the contents of string1 are copied
+string2 += "???"
+
+println(string1)			// prints "String One"
+println(string2)			// prints "String One???"
 </code></pre>
 
 				The exception is where both the recipient and source of the string are immutable, in which case no copy is made, since
@@ -152,6 +151,65 @@ let string1 = "String One"
 let string2 = string1		// no copy
 </code></pre>
 			</p>
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="characters">Characters</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+				Flax allows you to index into a <code>String</code> to get at the characters that make it up. Due to the nature of UTF-8,
+				a <code>Character</code> is actually a series of bytes that come together to represent a Unicode <i>codepoint</i>.
+
+				<aside class="note">
+					<p class="note-title">Note</p>
+					<p class="note-content">
+					While it is convenient to think of it as such, the <code>String</code> type is <i>not</i> actually made up of a list of
+					<code>Character</code> instances, for that would be far too inefficient. Instead, the String class stores a list of bytes,
+					and instances of Character are created <i>in-situ</i> and returned.
+					</p>
+				</aside>
+
+				There's really no point in having a separate syntax for characters, so in fact characters are simply initialised using string
+				literals. Thus, an explicit type must be specified, to prevent the variable from being inferred as type <code>String</code>.
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+let char: Character = "π"
+</code></pre>
+
+				<aside class="note">
+					<p class="note-title">Note</p>
+					<p class="note-content">
+					It is not
+					</p>
+				</aside>
+			</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

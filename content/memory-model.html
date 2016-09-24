@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>Flax Programming Language - Value Semantics and the Memory Model</title>
+
+	<!-- Bootstrap Core CSS -->
+	<link href="../css/bootstrap.css" rel="stylesheet">
+
+	<!-- Custom CSS -->
+	<link href="../css/style.css" rel="stylesheet">
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+	<link rel="stylesheet" href="../fonts/font-awesome-4.4.0/css/font-awesome.min.css">
+
+
+	<link rel="stylesheet" href="../css/prism.css" />
+	<script src="../js/prism.js"></script>
+
+
+	<!-- jQuery -->
+	<script src="../js/jquery.js"></script>
+	<script src="../js/jquery.easing.min.js"></script>
+	<script src="../js/init.js"></script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<a href="#menu-toggle" class="menu-toggle"><i class="fa fa-list"></i></a>
+
+		<div id="sidebar-wrapper"></div>
+
+		<!-- Page Content -->
+		<div id="page-content-wrapper">
+		<div class="container-fluid">
+		<div class="row">
+		<div class="col-lg-12" id="main-view">
+
+			<div class="col-lg-12 content-view" id="value-semantics-and-memory-model">
+			<h1 class="content-header">Value Semantics and the Memory Model</h1>
+			<hr />
+
+			<p>
+			This chapter lays out the behaviour and semantics of values in Flax.
+			</p>
+
+
+			<h3 class="subcontent-header" id="value-types">Value Types</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			There are 3 main types of values in Flax, one of which isn't really a value, just a wrapper type that encapsulates a certain
+			kind of behaviour.
+			</p>
+
+
+			<aside class="note">
+				<p class="note-title">Note</p>
+				<p class="note-content">
+				This is becoming like C++, which makes me slightly uneasy.
+				</p>
+			</aside>
+
+
+
+			<h4 class="subcontent-header" id="type-lvalues">L-values</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			In terms of the IR, these are either globals, or stack-allocated variables. In other words, lvalues will always have a pointer
+			(ie. memory location) associated with the actual value.
+
+			</p>
+
+
+
+
+			<h4 class="subcontent-header" id="type-rvalues">R-values</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			Again, in terms of the IR, these are normal values, with no memory location.
+
+			rvalues can be assigned to lvalues, by virtue of storing the value into the memory location. In places where we need an lvalue,
+			but only have an rvalue, an error will be thrown,
+
+			I can think of several places in the compiler where we generate an lvalue from an rvalue by doing this:
+
+<pre class="dcodesegment dcsouter"><code class="dcsinner">. stackalloc (make lvalue)
+. store rvalue into stackalloc
+. use stackalloc (lvalue)</code></pre>
+
+			which needs to be eradicated.
+			</p>
+
+
+			<h4 class="subcontent-header" id="type-fwvalues">FW-values</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			Name irrelevant; "function-wrapped values".
+
+			Basically the getter/setter construct we see in some places, like subscript operators and computed properties.
+			Fwvalues provide a getter function, and optionally a setter function.
+
+			Like with any function, the getter function returns an rvalue, while the setter function takes rvalue arguments.
+			</p>
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+class Foo
+{
+	var x: int
+	{
+		get { 10 }
+		set { printf("nice try\n"); }
+	}
+}</code></pre>
+
+			<p>
+			In the case above, <code>foo.x</code> is of fwvalue type.
+			</p>
+
+
+
+
+
+			<h4 class="subcontent-header" id="values-behaviour">Behaviour</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			Hopefully without reference types, these categories are easier to grok than the crazy value categories of C++. Below are a set of
+			hopefully-comprehensive scenarios, and the kind of values that they generate.
+
+			<ol>
+				<li><code>var x</code>
+					<ul>
+						<li><code>x</code> is an value. When a variable is referenced by name like this, it always generates an lvalue.</li>
+					</ul>
+				</li>
+				<br />
+				<li><code>foo(...)</code>
+					<ul>
+						<li>The result of calling a function is always an rvalue.</li>
+					</ul>
+				</li>
+				<br />
+				<li><code>x = foo[...]</code>, or <code>x = foo.p</code> where <code>p</code> is a computed property
+					<ul>
+						<li>Subscripts and computed propertiees are special constructs; the result of such an operation is an fwvalue.</li>
+						<li>Depending on whether the expression is used on the left or right, either the getter or setter is called.</li>
+						<li>Obviously if no setter is available and the expression is on the left side, an error is thrown.</li>
+					</ul>
+				</li>
+				<br />
+				<li><code>foo[...] = x</code>, or <code>foo.p = x</code> where <code>p</code> is a computed property
+					<ul>
+						<li>Similar to the point above.</li>
+					</ul>
+				</li>
+				<br />
+				<li><code>x = foo(...)</code>
+					<ul>
+						<li>Function calls result in an rvalue.</li>
+						<li><cod>x</cod> must be an lvalue for this statement to be valid.</li>
+					</ul>
+				</li>
+			</ol>
+			</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="copy-operator">Copy Operator</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			The copy operator can only be declared for <code>class</code> types, not for <code>struct</code> types.
+			Its definition takes this form:
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+class Foo
+{
+	copy(other: Foo)
+	{
+		// initialise self
+		self.x = other.x
+	}
+}</code></pre>
+			</p>
+
+			<p>
+			If no copy operator is provided, none will be provided for you by the state. If a copy opeartor is needed and it's not defined,
+			the compiler will throw an error.
+
+			It is as yet undetermined whether this is is a net increase or decrease in programmer burden.
+			</p>
+
+
+			<h4 class="subcontent-header" id="copy-operator-behaviour">Behaviour</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			Presented below are a set of hopefully-comprehensive scenarios in which the copy operator will be called.
+
+			<ol>
+				<li><code>foo = x</code></li>
+				<li><code>foo(x)</code></li>
+				<li><code>return x</code>
+					<ul>
+						<li>The copy operator is called on <code>foo</code>: <code>foo.copy(x)</code>, essentially.
+							The behaviour is identical for the 3 cases above.</li>
+					</ul>
+				</li>
+				<br />
+				<li><code>foo(bar())</code>
+					<ul>
+						<li>Functions return an rvalue, and functions take rvalues as arguments. Hence, no copy operator is called in
+							this scenario, and the result of <code>bar()</code> is passed directly to <code>foo</code>.</li>
+					</ul>
+				</li>
+			</ol>
+
+
+			</p>
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="move-operator">Move Operator</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Like the copy operator, the move operator can only be defined on <code>class</code> types.
+			The move operator takes this form:
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+class Foo
+{
+	move(other: Foo)
+	{
+		// initialise self
+		self.resource = other.resource
+		other.resource = null
+	}
+}</code></pre>
+			</p>
+
+			<p>
+			Note that while the copy and move operators take a similar form, they do fundamentally different things. The move operator is
+			most useful when an object owns resources, like file descriptors or websockets, that cannot be *meaningfully* copied.
+			</p>
+
+			<p>
+			To forbid copying instances of a certain class, the declaration for the copy operator is simply omitted; the compiler will
+			always attempt to use the move operator if possible, before resorting to the copy operator. Again, if the copy operator is
+			not defined but is needed, an error is thrown. However, if the move operator is not defined, then the copy operator can be
+			used to substitute for – the reverse is *not* true.
+			</p>
+
+			<p>
+			Like in C++, the move operator allows the transfer of 'ownership' from an rvalue to an lvalue, like in this case:
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">let x = openFileFromPathUsingMode("somefile.txt", "rw")
+</code></pre>
+
+			Since the function returns an rvalue, it is moved into the lvalue of <code>x</code>. However, something like this:
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">let y = x
+</code></pre>
+
+			would attempt to call the copy operator, since <code>x</code> is an lvalue, and <code>y</code> is an lvalue that is being assigned to.
+			</p>
+
+			<p>
+			Since it would not make sense to define such an operator for a file object, its declaration would have been omitted, and the
+			compiler will generate an error.
+			</p>
+
+			<p>
+			Calling the move operator is equivalent to this: <code>x.move(result)</code>, where <code>result</code>
+			is the rvalue resulting from the function call.
+
+			In essence, the move operator enables the compiler to avoid creating temporary copies of objects that need to be constructed,
+			only to be destructed a few lines later.
+			</p>
+
+
+
+
+
+			<h4 class="subcontent-header" id="move-operator-behaviour">Behaviour</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			Presented below are a set of hopefully-comprehensive scenarios in which the move operator will be called.
+
+			<ol>
+				<li><code>x = foo()</code>
+					<ul>
+						<li>Functions return rvalues. If the type of <code>x</code> defines a move operator, then it is called. If not,
+						the copy operator is called.</li>
+						<li>This is equivalent to calling <code>x.move(foo())</code></li>
+					</ul>
+				</li>
+				<br />
+				<li><code>x = foo[i]</code> or <code>x = foo.p</code></li>
+					<ul>
+						<li>Fwvalues cannot be moved from, even though they return rvalues.</li>
+						<li>The class which the subscript or property belongs to typically 'owns' the resources being referred to. Hence,
+						given that the actual instance of the class (<code>foo</code> here) is <i>not moved</i>, then its contents cannot
+						be moved away from it.</li>
+						<li>The scenarios above will result in calling the <i>copy operator</i>, if the type of <code>foo[i]</code> or
+						<code>foo.p</code> is a class type.</li>
+						<li>If such an operator does not exist, an error is thrown as usual.</li>
+					</ul>
+				</li>
+				<br />
+				<li><code>x = &lt;expr of x&gt;</code>
+					<ul>
+						<li>Given some random expression in <code>x</code>, for example an operator overload, the result of such an expression
+						(that is not an fwvalue) will always be an rvalue.</li>
+						<li>The behaviour in this case is identical to calling a function: <code>x.move(x + 1)</code>, assuming
+						<code>+</code> is defined suitably.</li>
+					</ul>
+				</li>
+				<br />
+				<li><code>foo[i] = bar()</code>, or <code>foo.p = bar()</code> where <code>p</code> is a computed property
+					<ul>
+						<li>Similar to calling a function with the result of another function, since <code>bar()</code> results in an rvalue,
+						the rvalue is passed directly to the setter of the fwvalue: <code>foo.p.set(bar())</code></li>
+					</ul>
+				</li>
+			</ol>
+
+			</p>
+
+
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="reference-counting">Reference Counting</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Only <code>class</code> types can be reference, since structs are supposed to be value types; they shouldn't be managing any
+			kind of memory or other "owned data".
+			</p>
+
+			<p>
+			However, there is technically no real reason why <code>struct</code> types cannot be reference counted either...
+			</p>
+
+			<p>
+			Declaring a certain variable to be reference counted makes the variable have a wrapper type, represented like this:
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+struct rc
+{
+	let ptr: T*
+	var refcount: i64
+}
+
+// ...
+
+var foo: rc&lt;Foo&gt;</code></pre>
+
+			Note that the data pointer is immutable, for obvious reasons. When a new variable of type <code>rc&lt;T&gt;</code> is created,
+			memory for <code>T</code> is allocated on the heap, so the variable contains a pointer to a valid piece of memory.
+			</p>
+
+			<p>
+			In terms of behaviour, <code>rc&lt;T&gt;</code> can be transparently
+			casted to both an rvalue <code>T</code>, and an rvalue <code>T*</code> that can be used to access the lvalue <code>T</code>.
+			This means that operations like this:
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+class Foo
+{
+	var x: int
+	init(a: int) { self.x = a }
+}
+
+operator + (a: Foo, b: int) -> Foo { return Foo(a.x + b) }
+
+// ...
+
+var x: rc&lt;Foo&gt; = Foo(10)
+let y = x + 40
+</code></pre>
+
+			are valid, without having to explicitly deference or <i>unwrap</i> the <code>rc</code> type. However, there is a caveat:
+			</p>
+
+			<p>
+			In the case of <code>x + 40</code>, <code>x</code> is implicitly unwrapped back to a <code>Foo</code> lvalue in order to call
+			the <code>+</code> operator. After the operation, however, we are left with an rvalue of type <code>Foo</code>, that needs to be converted to a <code>rc&lt;Foo&gt;</code> lvalue. Thus, if <code>x + 40</code> is assigned to a value, eg.
+			<code class="lang-swift">let y = x + 40</code> (note that <code>y</code> also has type <code>rc&lt;Foo&gt;</code>),
+			<code>x</code> essentially has to get <i>moved</i> to the lvalue <code>y</code>.
+			</p>
+
+			<p>
+			In this context, the rvalue of the operation is moved into the pointer, like this: <code>x.ptr.move(x + 40)</code>. The reference
+			count of <code>x</code> is not modified. This is completely valid – the <code>let</code> (immutability) of the pointer in
+			<code>rc</code> refers (in this case) only to the <i>value of the pointer</i>, not the object being pointed to. Thus, it is
+			perfectly valid to call mutating functions on reference counted types.
+			</p>
+
+
+
+
+			<p>
+			In terms of value semantics, <code>rc</code> types follow normal rules, in that <code>x</code> is an lvalue, and
+			<code>x + 40</code> is an rvalue.
+			</p>
+
+			<p>
+			To avoid subverting the reference counting system, reference counted lvalues cannot have their address taken, so
+			<code>&amp;x</code> is an invalid operation. Besides, since <code>rc</code> is only a wrapper type, its address is
+			completely meaningless.
+			</p>
+
+			<p>
+			Finally, in declaring a variable <code>var x: rc&lt;T&gt;</code>, the initial reference count of <code>x</code> is defined to
+			be <code>1</code>.
+			</p>
+
+
+
+
+
+
+			<h4 class="subcontent-header" id="refcounting-behaviour">Behaviour</h4>
+			<h4 class="anchor-clicker"></h4><p>
+
+			Presented below are a set of hopefully-comprehensive scenarios which are relevant to reference counted types:
+
+			<ol>
+				<li><code>foo = rc</code></li>
+				<li><code>foo.x = rc</code>
+					<ul>
+						<li>The reference count of the original value of the variable being assigned to is decremented.</li>
+						<li>The reference count of <code>rc</code> is incremented.</li>
+					</ul>
+				</li>
+				<br />
+				<li><code>rc = foo()</code>
+					<ul>
+						<li>The reference count of the original value of <code>rc</code> is decremented.</li>
+						<li>The rvalue result of <code>foo()</code> is stored directly into <code>rc</code>, ie. The data pointer
+						and the reference count are copied directly.</li>
+						<li>With the behaviour detailed in (4), the new reference count of <code>rc</code> should be <cod>1</cod> after
+						the function call</li>
+					</ul>
+				</li>
+				<br />
+				<li><code>return rc</code>
+					<ul>
+						<li>The reference count of <code>rc</code> is incremented.</li>
+						<li>The lvalue of <code>rc</code> is turned into an rvalue and returned, as usual. At the scope exit, the
+						compiler decrements the reference count of <code>rc</code>.</li>
+						<li>Since the refcount was artificially inflated by the return statement, <code>rc</code> is not deallocated, and
+						the result returned by the function retains the data pointer of <code>rc</code>, and a reference count of
+						<code>1</code>.</li>
+					</ul>
+				</li>
+				<br />
+				<li><code>foo(rc)</code>
+					<ul>
+						<li>Functions taking <code>rc&lt;T&gt;</code> actually take <code>rc&lt;T&gt;*</code>. This has several implications
+							<ul>
+								<li>Rvalue expressions cannot be passed to functions, eg. <code>foo(x + 4)</code> is invalid if
+								<code>x</code> is a reference counted type.</li>
+								<li>The compiler needs to handle this inconvenience in codegen.</li>
+							</ul>
+						</li>
+						<li>This behaviour ensures that the <code>rc</code> is <i>not copied</i>, allowing the original reference count to
+						be updated.</li>
+						<li>The value being passed to the function <i>is</i>, for all intents and purposes, <code>rc</code>. If the
+						callee prolongs the lifespan of <code>rc</code> (eg. by assigning it to some global), this should naturally
+						prolong the lifespan of the original <code>rc</code>, and with this behaviour it will.</li>
+					</ul>
+				</li>
+			</ol>
+			</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<h3 class="subcontent-header" id="string-refcounting">String Reference Counting</h3>
+			<h3 class="anchor-clicker"></h3><p>
+
+			Strings essentially behave in the same, reference-counted manner as <code>rc</code> types.
+			</p>
+
+			<p>
+			The string contains a length, in bytes, of the buffer, as well as said buffer, which is a null-terminated series of bytes.
+			Built-in to the string representation is a 32-bit reference count – it's smaller than the default <code>rc&lt;T&gt;</code>,
+			but this allows the string to fit into 16 bytes (on 64-bit platforms).
+			</p>
+
+			<p>
+			Strings are represented as such:
+
+<pre class="dcodesegment dcsouter"><code class="lang-swift dcsinner">
+struct string
+{
+	let buffer: int8*
+	let length: int32
+	var refcount: int32
+}</code></pre>
+
+			Again, note that both the buffer and the length are immutable. Indeed, strings are immutable themselves. Operations that would
+			modify a string instead return new strings.
+			</p>
+
+			<p>
+			For example, in <code>x += &quot;foo&quot;</code>, it is actually <code>x = (x + &quot;foo&quot;)</code>, and the difference is
+			that the string pointed to by <code>x</code> is not modified; <code>x</code> is given an entirely new string.
+			</p>
+
+			<p>
+			Operations creating strings like these, or any expression like <code>&quot;a&quot; + &quot;b&quot;</code>, allocate memory for
+			the new string on the heap. String literals like <code>&quot;foo&quot;</code>, on the other hand, are statically allocated as
+			expected. The reference count of such strings cannot be modified, so they are never dereferenced.
+			</p>
+
+			<p>
+			Differing from <code>rc&lt;T&gt;</code> is that, in passing strings to functions, the a new string object is created with the
+			buffer being copied, which simplifies things on this end for now.
+			</p>
+
+
+
+
+
+
+
+
+			<div class="next-prev-footer">
+				<div class="footer-prev"><a href="the-basics.html"><i class="fa fa-caret-left"></i> The Basics</a></div>
+				<div class="footer-next"><a href="strings.html">Strings <i class="fa fa-caret-right"></i></a></div>
+			</div>
+
+
+			</div>
+
+
+
+		</div>
+		</div>
+		</div>
+		</div>
+
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="../js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

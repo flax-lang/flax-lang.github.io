@@ -1,5 +1,14 @@
 $(document).ready(function()
 {
+	window.getActualBasePath = function()
+	{
+		if(window.location.origin == "file://")
+			return "../";
+
+		else
+			return window.location.origin;
+	}
+
 	window.registerButtons = function()
 	{
 		$(".section-button").on("click", function(e)
@@ -7,7 +16,7 @@ $(document).ready(function()
 			e.preventDefault();
 			var toLoad = $(this).attr("id") +".html";
 
-			window.location.href = window.location.origin + "/content/" + toLoad;
+			window.location.href = window.getActualBasePath() + "/content/" + toLoad;
 		});
 	}
 
@@ -30,8 +39,6 @@ $(document).ready(function()
 			// if you want a precise check then use distance===0
 			if(distance < 30 && distance > -30 && currentHash != hash)
 			{
-				// window.location.hash = (hash);
-
 				// modern shit
 				window.history.pushState(null, null, '#' + hash);
 				currentHash = hash;
@@ -40,7 +47,7 @@ $(document).ready(function()
 	});
 
 
-	$("#sidebar-wrapper").load(window.location.origin + "/content/sidebar.html", function()
+	$("#sidebar-wrapper").load(window.getActualBasePath() + "/content/sidebar.html", function()
 	{
 		registerButtons();
 	});
@@ -64,6 +71,15 @@ $(document).ready(function()
 
 
 
+
+	// do the thing
+	{
+		var id = window.location.href.substring(window.location.href.indexOf("#") + 1);
+		var st = $("#" + id).offset().top;
+
+		$("html, body").scrollTop(st);
+		currentHash = id;
+	}
 
 
 	Prism.highlightAll();
