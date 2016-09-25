@@ -423,10 +423,11 @@ let y = x + 40
 			</p>
 
 			<p>
-			In this context, the rvalue of the operation is moved into the pointer, like this: <code>x.ptr.move(x + 40)</code>. The reference
-			count of <code>x</code> is not modified. This is completely valid – the <code>let</code> (immutability) of the pointer in
-			<code>rc</code> refers (in this case) only to the <i>value of the pointer</i>, not the object being pointed to. Thus, it is
-			perfectly valid to call mutating functions on reference counted types.
+			In this context, the rvalue of the operation is moved into the pointer, like this: <code>y.ptr.move(x + 40)</code>.
+			</p>
+
+			<p>
+			For an expression such as <code>x += 40</code>, it is expanded to <code>x = x + 40</code>, and hence <code>x.ptr.move(unwrap(x) + 40)</code>. The reference count is unmodified after this operation. This is completely valid – the <code>let</code> (immutability) of the pointer in <code>rc</code> refers (in this case) only to the <i>value of the pointer</i>, not the object being pointed to. Thus, it is perfectly valid to call mutating functions on reference counted types.
 			</p>
 
 
